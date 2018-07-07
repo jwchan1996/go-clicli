@@ -14,3 +14,7 @@ func Login(w http.ResponseWriter,r*http.Request,p httprouter.Params){
 	uname:=p.ByName("name")
 	io.WriteString(w,uname)
 }
+
+func AllPosts(w http.ResponseWriter,r*http.Request,p httprouter.Params){
+	io.WriteString(w,"all ariticles!")
+}
