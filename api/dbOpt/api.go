@@ -8,10 +8,10 @@ func openConn() *sql.DB{
 
 }
 
-func CreateUserCredential(loginNmae:string, pwd:string) error {
+func CreateUserCredential(name:string, pwd:string) error {
 
 }
 
-func GetUserCredential(loginNmae:string) (string,error) {
+func GetUserCredential(name:string) (string,error) {
 
 }
