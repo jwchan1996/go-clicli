@@ -13,8 +13,11 @@ func CreateUserCredential(name string, pwd string, role string, qq int) error {
 		return err
 	}
 
-	stmtIns.Exec(name, pwd, role, qq)
-	stmtIns.Close()
+	_, err = stmtIns.Exec(name, pwd, role, qq)
+	if err != nil {
+		return err
+	}
+	defer stmtIns.Close()
 	return nil
 }
 
@@ -42,7 +45,10 @@ func DeleteUser(name string, pwd string) error {
 		log.Printf("%s", err)
 		return err
 	}
-	stmtDel.Exec(name, pwd)
+	_, err = stmtDel.Exec(name, pwd)
+	if err != nil {
+		return err
+	}
 	stmtDel.Close()
 
 	return nil
