@@ -7,12 +7,12 @@ import (
 
 var (
 	dbConn *sql.DB
-	err error
+	err    error
 )
 
-func init(){
-	dbConn,err:=sql.Open("mysql","root:root@tcp(localhost:3307)/uraban?charset=utf8")
-	if err != nil{
+func init() {
+	dbConn, err = sql.Open("mysql", "root:root@tcp(localhost:3307)/uraban?charset=utf8")
+	if err != nil {
 		panic(err.Error())
 	}
 }

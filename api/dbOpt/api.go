@@ -1,19 +1,49 @@
 package dbOpt
 
 import (
-	"database/sql"
+	"log"
 	_ "github.com/go-sql-driver/mysql"
+	"database/sql"
 )
 
-func openConn() *sql.DB{
+func CreateUserCredential(name string, pwd string, role string, qq int) error {
+	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq) VALUES (?,?,?,?)")
+	if err != nil {
+		log.Printf("%s", err)
+		return err
+	}
 
-	return dbConn
+	stmtIns.Exec(name, pwd, role, qq)
+	stmtIns.Close()
+	return nil
 }
 
-func CreateUserCredential(name:string, pwd:string) error {
+func GetUserCredential(name string) (string, error) {
+	stmtOut, err := dbConn.Prepare("SELECT pwd FROM users WHERE name = ?")
+	if err != nil {
+		log.Printf("%s", err)
+		return "", err
+	}
 
+	var pwd string
+	err = stmtOut.QueryRow(name).Scan(&pwd)
+	if err != nil && err != sql.ErrNoRows {
+		return "", err
+	}
+
+	defer stmtOut.Close()
+
+	return pwd, nil
 }
 
-func GetUserCredential(name:string) (string,error) {
+func DeleteUser(name string, pwd string) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM users WHERE name=? AND pwd=?")
+	if err != nil {
+		log.Printf("%s", err)
+		return err
+	}
+	stmtDel.Exec(name, pwd)
+	stmtDel.Close()
 
+	return nil
 }
