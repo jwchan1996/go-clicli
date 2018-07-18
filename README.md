@@ -1,6 +1,11 @@
 # acgzone-server
 和谐区的后端重构，语言从 node 换 golang
 
+### 依赖
+* httprouter
+* fasthttp
+* go-sql-driver
+
 ### TO DO……
 * 争取重构所有 api ，但是无法移除 koa ，koa 将会作为中间层只负责 ssr
 * 数据库 mongoDB 换 mysql
