@@ -22,14 +22,14 @@ func TestUserWorkFlow(t *testing.T) {
 }
 
 func testCreateUser(t *testing.T) {
-	err := CreateUserCredential("admin", "admin", "user", 1533540012)
+	err := CreateUser("admin", "admin", "user", 1533540012)
 	if err != nil {
 		t.Errorf("Err of CreateUser:%v", err)
 	}
 }
 
 func testGetUser(t *testing.T) {
-	pwd, err := GetUserCredential("admin")
+	pwd, err := GetUser("admin")
 	if pwd != "admin" {
 		t.Errorf("%v", pwd)
 	}
@@ -46,7 +46,7 @@ func testDeleteUser(t *testing.T) {
 }
 
 func testRegetUser(t *testing.T) {
-	pwd, err := GetUserCredential("admin")
+	pwd, err := GetUser("admin")
 	if err != nil {
 		t.Errorf("Err of regetUser:%v", err)
 	}

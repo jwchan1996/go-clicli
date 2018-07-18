@@ -6,7 +6,9 @@ import (
 	"database/sql"
 )
 
-func CreateUserCredential(name string, pwd string, role string, qq int) error {
+//用户增删改查
+
+func CreateUser(name string, pwd string, role string, qq int) error {
 	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq) VALUES (?,?,?,?)")
 	if err != nil {
 		log.Printf("%s", err)
@@ -21,7 +23,7 @@ func CreateUserCredential(name string, pwd string, role string, qq int) error {
 	return nil
 }
 
-func GetUserCredential(name string) (string, error) {
+func GetUser(name string) (string, error) {
 	stmtOut, err := dbConn.Prepare("SELECT pwd FROM users WHERE name = ?")
 	if err != nil {
 		log.Printf("%s", err)
@@ -53,3 +55,22 @@ func DeleteUser(name string, pwd string) error {
 
 	return nil
 }
+
+//文章增删改查
+
+func AddPost(title string, content string, time string, status string, sort string) error {
+	stmtIns, err := dbConn.Prepare("INSERT INTO users (title,content,time,status,sort) VALUES (?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmtIns.Exec(title, content, time, status, sort)
+	if err != nil {
+		return err
+	}
+	defer stmtIns.Close()
+
+	return nil
+}
+
+//视频增删改查
+
