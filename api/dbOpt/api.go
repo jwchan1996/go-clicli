@@ -121,3 +121,6 @@ func DeletePost(id int) error {
 	return nil
 
 }
+
+//评论增删改查
+
