@@ -62,12 +62,12 @@ func DeleteUser(name string, pwd string) error {
 
 func AddPost(title string, content string, sort string, status string) (*def.Post, error) {
 	t := time.Now()
-	ctime := t.Format("Jan 02 2006,15:04:05")
-	stmtIns, err := dbConn.Prepare("INSERT INFO posts (title,content,sort,status,time) VALUES (?,?,?,?,?)")
+	ctime := t.Format("2006-01-02")
+	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,time) VALUES (?,?,?,?,?)")
 	if err != nil {
 		return nil, err
 	}
-	_, err = stmtIns.Exec(title, content, ctime, status, sort)
+	_, err = stmtIns.Exec(title, content, status, sort, ctime)
 	if err != nil {
 		return nil, err
 	}
@@ -78,8 +78,8 @@ func AddPost(title string, content string, sort string, status string) (*def.Pos
 	return res, err
 }
 
-func GetPsot(id int) (*def.Post, error) {
-	stmtOut, err := dbConn.Prepare("SELECT title content status sort time FROM posts WHERE id = ?")
+func GetPost(id int) (*def.Post, error) {
+	stmtOut, err := dbConn.Prepare("SELECT title,content,status,sort,time FROM posts WHERE id = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
@@ -108,7 +108,7 @@ func GetPsot(id int) (*def.Post, error) {
 
 func DeletePost(id int) error {
 	stmtDel, err := dbConn.Prepare("DELETE FROM posts WHERE id=?")
-	if err !=nil{
+	if err != nil {
 		return err
 	}
 

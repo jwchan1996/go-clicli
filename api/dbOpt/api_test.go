@@ -54,3 +54,39 @@ func testRegetUser(t *testing.T) {
 		t.Errorf("Delete user test failed")
 	}
 }
+
+func TestPostWorkFlow(t *testing.T) {
+	t.Run("Create", testAddPost)
+	t.Run("Get", testGetPost)
+	t.Run("Delete", testDeletePost)
+	t.Run("Reget", testRegetPost)
+}
+
+func testAddPost(t *testing.T) {
+	_, err := AddPost("title", "content", "anime", "publish")
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+}
+
+func testGetPost(t *testing.T) {
+	_, err := GetPost(1)
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+}
+
+
+func testDeletePost(t *testing.T) {
+	err := DeletePost(1)
+	if err != nil {
+		t.Errorf("%v", err)
+	}
+}
+
+func testRegetPost(t *testing.T) {
+	_, err := GetPost(1)
+	if err != nil {
+		t.Errorf("Err of regetUser:%v", err)
+	}
+}
