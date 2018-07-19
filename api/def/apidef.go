@@ -10,8 +10,8 @@ type UserCredential struct {
 
 type Post struct {
 	Title string `json:"title"`
+	Content string `json:"content"`
 	Status string `json:"status"`
 	Sort string `json:"sort"`
 	Time int `json:"time"`
-	Author UserCredential `json:"author"`
 }

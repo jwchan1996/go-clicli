@@ -1,9 +1,11 @@
 package dbOpt
 
 import (
+	"time"
 	"log"
 	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
+	"github.com/132yse/acgzone-server/api/def"
 )
 
 //用户增删改查
@@ -58,19 +60,18 @@ func DeleteUser(name string, pwd string) error {
 
 //文章增删改查
 
-func AddPost(title string, content string, time string, status string, sort string) error {
-	stmtIns, err := dbConn.Prepare("INSERT INTO users (title,content,time,status,sort) VALUES (?,?,?,?,?)")
+func AddVideo(title string, content string, sort string, status string) (*def.Post, error) {
+	t := time.Now()
+	ctime := t.Format("Jan 02 2006,15:04:05")
+	stmtIns,err := dbConn.Prepare("INSERT INFO posts (title,content,sort,status,time) VALUES (?,?,?,?,?)")
 	if err != nil {
-		return err
+		return nil,err
 	}
-	_, err = stmtIns.Exec(title, content, time, status, sort)
+	_, err = stmtIns.Exec(title, content, ctime, status, sort)
 	if err != nil {
-		return err
+		return nil,err
 	}
 	defer stmtIns.Close()
 
-	return nil
+	res := $def.Post{Title:title,Content:content,Status:status,Sort:sort,Time:ctime}
 }
-
-//视频增删改查
-
