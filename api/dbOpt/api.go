@@ -60,18 +60,64 @@ func DeleteUser(name string, pwd string) error {
 
 //文章增删改查
 
-func AddVideo(title string, content string, sort string, status string) (*def.Post, error) {
+func AddPost(title string, content string, sort string, status string) (*def.Post, error) {
 	t := time.Now()
 	ctime := t.Format("Jan 02 2006,15:04:05")
-	stmtIns,err := dbConn.Prepare("INSERT INFO posts (title,content,sort,status,time) VALUES (?,?,?,?,?)")
+	stmtIns, err := dbConn.Prepare("INSERT INFO posts (title,content,sort,status,time) VALUES (?,?,?,?,?)")
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	_, err = stmtIns.Exec(title, content, ctime, status, sort)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	defer stmtIns.Close()
 
-	res := $def.Post{Title:title,Content:content,Status:status,Sort:sort,Time:ctime}
+	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Time: ctime}
+	defer stmtIns.Close()
+	return res, err
+}
+
+func GetPsot(id int) (*def.Post, error) {
+	stmtOut, err := dbConn.Prepare("SELECT title content status sort time FROM posts WHERE id = ?")
+	if err != nil {
+		log.Printf("%s", err)
+		return nil, err
+	}
+
+	var title string
+	var content string
+	var status string
+	var sort string
+	var time string
+
+	err = stmtOut.QueryRow(id).Scan(&title, &content, &status, &sort, &time)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	defer stmtOut.Close()
+
+	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Time: time}
+
+	return res, nil
+}
+
+func DeletePost(id int) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM posts WHERE id=?")
+	if err !=nil{
+		return err
+	}
+
+	_, err = stmtDel.Exec(id)
+	if err != nil {
+		return err
+	}
+	stmtDel.Close()
+
+	return nil
+
 }
