@@ -9,12 +9,11 @@ import (
 
 func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 	w.WriteHeader(errRes.Code)
-	resStr, _ := json.Marshal(&errRes.Error)
+	resStr, _ := json.Marshal(&errRes)
 	io.WriteString(w, string(resStr))
 }
 
-func sendNormalResponse(w http.ResponseWriter, res def.Success, sc int) {
+func sendNormalResponse(w http.ResponseWriter, res string, sc int) {
 	w.WriteHeader(sc)
-	resStr, _ := json.Marshal(&def.Success{Code: sc, Result: res})
-	io.WriteString(w, string(resStr))
+	io.WriteString(w, res)
 }

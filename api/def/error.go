@@ -1,17 +1,13 @@
-package def 
-
-type Err struct {
-	Msg string `json:"error"`
-
-}
+package def
 
 type ErrorResponse struct {
-	Code int
-	Error Err
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 var (
-	ErrorRequestBodyParseFailed = ErrorResponse{Code:400,Error:Err{Msg:"request body is not correct"}}
-	ErrorNotAuthUser = ErrorResponse{Code:401,Error:Err{Msg:"user is not right"}}
-	ErrorDB = ErrorResponse{Code:500,Error:Err{Msg:"DB failed"}}
+	Success                     = ErrorResponse{Code: 201, Msg: "成功啦！"}
+	ErrorRequestBodyParseFailed = ErrorResponse{Code: 400, Msg: "请求不对(⊙o⊙)…"}
+	ErrorNotAuthUser            = ErrorResponse{Code: 401, Msg: "用户没有权限！"}
+	ErrorDB                     = ErrorResponse{Code: 500, Msg: "数据库错误~"}
 )

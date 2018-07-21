@@ -10,12 +10,17 @@ import (
 	"github.com/132yse/acgzone-server/api/dbOpt"
 )
 
-func RegisterUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	res, _ := ioutil.ReadAll(r.Body)
-	//res = bytes.TrimPrefix(res, []byte{239, 187, 191})
 	ubody := &def.UserCredential{}
+
 	if err := json.Unmarshal(res, ubody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		return
+	}
+
+	if res, _ := dbOpt.GetUser(ubody.Name); res.Role != "" {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
 
@@ -23,8 +28,10 @@ func RegisterUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		sendNormalResponse(w, string(res), 201)
+		//sendNormalResponse(w, string(res), 201)
+		sendErrorResponse(w, def.Success)
 	}
+
 }
 
 func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
