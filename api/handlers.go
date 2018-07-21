@@ -19,7 +19,7 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if res, _ := dbOpt.GetUser(ubody.Name); res.Role != "" {
+	if res, _ := dbOpt.GetUser(ubody.Name); res != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
@@ -34,9 +34,16 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 }
 
-func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uname := p.ByName("name")
-	io.WriteString(w, uname)
+	resp, err := dbOpt.GetUser(uname)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	} else {
+		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+		sendNormalResponse(w, res, 201)
+	}
 }
 
 func AllPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

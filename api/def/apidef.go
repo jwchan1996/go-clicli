@@ -1,6 +1,7 @@
 package def
 
 type UserCredential struct {
+	Id int `json:"id"`
 	Name string `json:"name"`
 	Pwd  string `json:"pwd"`
 	Role string `json:"role"`
