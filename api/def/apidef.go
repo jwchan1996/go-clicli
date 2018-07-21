@@ -1,10 +1,10 @@
 package def
 
 type UserCredential struct {
-	UserName string `json:"name"`
+	Name string `json:"name"`
 	Pwd string `json:"pwd"`
 	Role string `json:"role"`
-	QQ string `json:"qq"`
+	QQ int `json:"qq"`
 	Desc string `json:"desc"`
 }
 
@@ -14,4 +14,9 @@ type Post struct {
 	Status string `json:"status"`
 	Sort string `json:"sort"`
 	Time string `json:"time"`
+}
+
+type Success struct {
+	Code int `json:"code"`
+	Result string `json:"result"`
 }

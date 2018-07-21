@@ -13,7 +13,8 @@ func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 	io.WriteString(w, string(resStr))
 }
 
-func sendNormalResponse(w http.ResponseWriter, res string, sc int) {
+func sendNormalResponse(w http.ResponseWriter, res def.Success, sc int) {
 	w.WriteHeader(sc)
-	io.WriteString(w, res)
+	resStr, _ := json.Marshal(&def.Success{Code: sc, Result: res})
+	io.WriteString(w, string(resStr))
 }
