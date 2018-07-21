@@ -10,14 +10,14 @@ import (
 
 //用户增删改查
 
-func CreateUser(name string, pwd string, role string, qq int) error {
-	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq) VALUES (?,?,?,?)")
+func CreateUser(name string, pwd string, role string, qq int, sign string) error {
+	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq,sign) VALUES (?,?,?,?,?)")
 	if err != nil {
 		log.Printf("%s", err)
 		return err
 	}
 
-	_, err = stmtIns.Exec(name, pwd, role, qq)
+	_, err = stmtIns.Exec(name, pwd, role, qq, sign)
 	if err != nil {
 		return err
 	}
@@ -121,6 +121,3 @@ func DeletePost(id int) error {
 	return nil
 
 }
-
-//评论增删改查
-

@@ -22,7 +22,7 @@ func TestUserWorkFlow(t *testing.T) {
 }
 
 func testCreateUser(t *testing.T) {
-	err := CreateUser("admin", "admin", "user", 1533540012)
+	err := CreateUser("admin", "admin", "user", 1533540012,"")
 	if err != nil {
 		t.Errorf("Err of CreateUser:%v", err)
 	}

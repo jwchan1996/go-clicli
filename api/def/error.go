@@ -5,12 +5,13 @@ type Err struct {
 
 }
 
-type ErroResponse struct {
+type ErrorResponse struct {
 	Code int
 	Error Err
 }
 
 var (
-	ErroRequestBodyParseFailed = ErroResponse{Code:0,Error:Err{Msg:"request body is not correct"}}
-	ErrorNotAuthUser = ErroResponse{Code:0,Error:Err{Msg:"user is not authed"}}
+	ErrorRequestBodyParseFailed = ErrorResponse{Code:400,Error:Err{Msg:"request body is not correct"}}
+	ErrorNotAuthUser = ErrorResponse{Code:401,Error:Err{Msg:"user is not right"}}
+	ErrorDB = ErrorResponse{Code:500,Error:Err{Msg:"DB failed"}}
 )

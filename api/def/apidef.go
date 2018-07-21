@@ -13,5 +13,5 @@ type Post struct {
 	Content string `json:"content"`
 	Status string `json:"status"`
 	Sort string `json:"sort"`
-	Time int `json:"time"`
+	Time string `json:"time"`
 }
