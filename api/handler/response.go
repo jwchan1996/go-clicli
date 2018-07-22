@@ -16,7 +16,7 @@ func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 func sendUserResponse(w http.ResponseWriter, uRes def.UserCredential, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
-		Code int `json:"code"`
+		Code   int                `json:"code"`
 		Result def.UserCredential `json:"result"`
 	}{sc, uRes})
 	io.WriteString(w, string(resStr))
@@ -25,9 +25,17 @@ func sendUserResponse(w http.ResponseWriter, uRes def.UserCredential, sc int) {
 func sendPostResponse(w http.ResponseWriter, pRes def.Post, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
-		Code int `json:"code"`
+		Code   int      `json:"code"`
 		Result def.Post `json:"result"`
 	}{sc, pRes})
 	io.WriteString(w, string(resStr))
 }
 
+func sendPostsResponse(w http.ResponseWriter, pRes *def.Posts, sc int) {
+	w.WriteHeader(sc)
+	resStr, _ := json.Marshal(struct {
+		Code   int        `json:"code"`
+		Result *def.Posts `json:"result"`
+	}{sc, pRes})
+	io.WriteString(w, string(resStr))
+}

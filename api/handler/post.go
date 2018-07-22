@@ -37,10 +37,23 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 	resp, err := db.GetPost(pint)
 	if err != nil {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
+		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
 		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Time: resp.Time}
 		sendPostResponse(w, res, 201)
+	}
+}
+
+func GetPostsByStatus(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	status := r.URL.Query().Get("status")
+
+	resp, err := db.GetPostsByStatus(status)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		res := &def.Posts{Posts: resp}
+		sendPostsResponse(w, res, 201)
 	}
 }

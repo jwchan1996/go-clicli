@@ -17,3 +17,7 @@ type Post struct {
 	Sort    string `json:"sort"`
 	Time    string `json:"time"`
 }
+
+type Posts struct {
+	Posts []*Post `json:"posts"`
+}

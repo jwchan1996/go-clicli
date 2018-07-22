@@ -116,6 +116,34 @@ func GetPost(id int) (*def.Post, error) {
 	return res, nil
 }
 
+//查找发布状态的所有文章
+
+func GetPostsByStatus(status string) ([]*def.Post, error) {
+	stmtOut, err := dbConn.Prepare(` SELECT * FROM posts WHERE status =?`)
+
+	var res []*def.Post
+
+	rows, err := stmtOut.Query(status)
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id int
+		var title, content, status, sort, ctime string
+		if err := rows.Scan(&title, &content, &status, &sort, &ctime); err != nil {
+			return res, err
+		}
+
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Time: ctime}
+		res = append(res, c)
+	}
+	defer stmtOut.Close()
+
+	return res, nil
+
+}
+
 func DeletePost(id int) error {
 	stmtDel, err := dbConn.Prepare("DELETE FROM posts WHERE id=?")
 	if err != nil {
