@@ -17,7 +17,7 @@ func sendUserResponse(w http.ResponseWriter, uRes def.UserCredential, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
 		Code   int                `json:"code"`
-		Result def.UserCredential `json:"result"`
+		User def.UserCredential `json:"user"`
 	}{sc, uRes})
 	io.WriteString(w, string(resStr))
 }
