@@ -11,10 +11,10 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	res, _ := ioutil.ReadAll(r.Body)
+	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.UserCredential{}
 
-	if err := json.Unmarshal(res, ubody); err != nil {
+	if err := json.Unmarshal(req, ubody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
 		return
 	}
@@ -30,6 +30,25 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	} else {
 		sendErrorResponse(w, def.Success)
 	}
+
+}
+
+func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	req, _ := ioutil.ReadAll(r.Body)
+	ubody := &def.UserCredential{}
+
+	if err := json.Unmarshal(req, ubody); err != nil {
+		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		return
+	}
+
+	res, _ := db.GetUser(ubody.Name)
+	if res != nil {
+		if ubody.Pwd == res.Pwd{
+			sendErrorResponse(w, def.Success)
+		}
+	}
+
 
 }
 
