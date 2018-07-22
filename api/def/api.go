@@ -1,7 +1,7 @@
 package def
 
 type UserCredential struct {
-	Id   int    `json:"id"`
+	Id   int    `json:"id,omitempty"`
 	Name string `json:"name"`
 	Pwd  string `json:"pwd,omitempty"`
 	Role string `json:"role"`
@@ -10,7 +10,7 @@ type UserCredential struct {
 }
 
 type Post struct {
-	Id      int    `json:"id"`
+	Id      int    `json:"id,omitempty"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	Status  string `json:"status"`

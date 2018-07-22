@@ -89,19 +89,19 @@ func AddPost(title string, content string, sort string, status string) (*def.Pos
 }
 
 func GetPost(id int) (*def.Post, error) {
-	stmtOut, err := dbConn.Prepare("SELECT title,content,status,sort,time FROM posts WHERE id = ?")
+	stmtOut, err := dbConn.Prepare("SELECT id,title,content,status,sort,time FROM posts WHERE id = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
 	}
-
+	var pid int
 	var title string
 	var content string
 	var status string
 	var sort string
 	var time string
 
-	err = stmtOut.QueryRow(id).Scan(&title, &content, &status, &sort, &time)
+	err = stmtOut.QueryRow(id).Scan(&pid, &title, &content, &status, &sort, &time)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func GetPost(id int) (*def.Post, error) {
 
 	defer stmtOut.Close()
 
-	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Time: time}
+	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Time: time}
 
 	return res, nil
 }
