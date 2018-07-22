@@ -20,7 +20,7 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	if res, _ := db.GetUser(ubody.Name); res != nil {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
+		sendErrorResponse(w, def.ErrorUserNameRepeated)
 		return
 	}
 

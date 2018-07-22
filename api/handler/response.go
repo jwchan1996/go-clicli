@@ -3,8 +3,8 @@ package handler
 import (
 	"io"
 	"net/http"
-	"github.com/132yse/acgzone-server/api/def"
 	"encoding/json"
+	"github.com/132yse/acgzone-server/api/def"
 )
 
 func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {

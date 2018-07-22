@@ -10,4 +10,5 @@ var (
 	ErrorRequestBodyParseFailed = ErrorResponse{Code: 400, Msg: "请求不对(⊙o⊙)…"}
 	ErrorNotAuthUser            = ErrorResponse{Code: 401, Msg: "用户没有权限！"}
 	ErrorDB                     = ErrorResponse{Code: 500, Msg: "数据库错误~"}
+	ErrorUserNameRepeated       = ErrorResponse{Code: 402, Msg: "用户名已存在~"}
 )

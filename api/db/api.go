@@ -1,10 +1,10 @@
 package db
 
 import (
-	"time"
 	"log"
-	_ "github.com/go-sql-driver/mysql"
+	"time"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/util"
 )
