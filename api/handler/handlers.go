@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"io"
@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/def"
-	"github.com/132yse/acgzone-server/api/dbOpt"
+	"github.com/132yse/acgzone-server/api/db"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -19,16 +19,15 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if res, _ := dbOpt.GetUser(ubody.Name); res != nil {
+	if res, _ := db.GetUser(ubody.Name); res != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
 
-	if err := dbOpt.CreateUser(ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
+	if err := db.CreateUser(ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		//sendNormalResponse(w, string(res), 201)
 		sendErrorResponse(w, def.Success)
 	}
 
@@ -36,7 +35,7 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uname := p.ByName("name")
-	resp, err := dbOpt.GetUser(uname)
+	resp, err := db.GetUser(uname)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return

@@ -1,4 +1,4 @@
-package dbOpt
+package db
 
 import (
 	"database/sql"

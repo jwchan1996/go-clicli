@@ -1,4 +1,4 @@
-package dbOpt
+package db
 
 import (
 	"time"
@@ -6,11 +6,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
 	"github.com/132yse/acgzone-server/api/def"
+	"github.com/132yse/acgzone-server/api/util"
 )
 
 //用户增删改查
 
 func CreateUser(name string, pwd string, role string, qq int, sign string) error {
+	pwd = util.Cipher(pwd)
 	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq,sign) VALUES (?,?,?,?,?)")
 	if err != nil {
 		log.Printf("%s", err)
