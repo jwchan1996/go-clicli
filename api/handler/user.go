@@ -1,14 +1,12 @@
 package handler
 
 import (
-	"io"
 	"net/http"
 	"io/ioutil"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
-	"log"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -43,10 +41,10 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	res, _ := db.GetUser(ubody.Name)
-	log.Printf("%s", res)
-	if ubody.Pwd == res.Pwd {
-		sendErrorResponse(w, def.Success)
+	resp, _ := db.GetUser(ubody.Name)
+	if ubody.Pwd == resp.Pwd {
+		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+		sendUserResponse(w, res, 201)
 	}
 
 }
@@ -59,14 +57,6 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		sendNormalResponse(w, res, 201)
+		sendUserResponse(w, res, 201)
 	}
-}
-
-func AllPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	io.WriteString(w, "all ariticles!")
-}
-
-func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	io.WriteString(w, "get a post")
 }
