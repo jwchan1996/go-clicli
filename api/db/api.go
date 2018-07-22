@@ -6,7 +6,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/132yse/acgzone-server/api/def"
-	"github.com/132yse/acgzone-server/api/util"
+	"util"
 )
 
 //用户增删改查
