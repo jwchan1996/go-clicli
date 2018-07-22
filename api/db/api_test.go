@@ -29,10 +29,6 @@ func testCreateUser(t *testing.T) {
 }
 
 func testGetUser(t *testing.T) {
-	pwd, err := GetUser("admin")
-	if pwd != "admin" {
-		t.Errorf("%v", pwd)
-	}
 	if err != nil {
 		t.Errorf("Err of GetUser:%v", err)
 	}

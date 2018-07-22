@@ -70,7 +70,7 @@ func DeleteUser(name string, pwd string) error {
 
 //文章增删改查
 
-func AddPost(title string, content string, sort string, status string) (*def.Post, error) {
+func AddPost(title string, content string, status string, sort string) (*def.Post, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02")
 	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,time) VALUES (?,?,?,?,?)")
@@ -119,7 +119,7 @@ func GetPost(id int) (*def.Post, error) {
 //查找发布状态的所有文章
 
 func GetPostsByStatus(status string) ([]*def.Post, error) {
-	stmtOut, err := dbConn.Prepare(` SELECT * FROM posts WHERE status =?`)
+	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE status =?")
 
 	var res []*def.Post
 
@@ -131,7 +131,7 @@ func GetPostsByStatus(status string) ([]*def.Post, error) {
 	for rows.Next() {
 		var id int
 		var title, content, status, sort, ctime string
-		if err := rows.Scan(&title, &content, &status, &sort, &ctime); err != nil {
+		if err := rows.Scan(&id, &title, &content, &status, &sort, &ctime); err != nil {
 			return res, err
 		}
 

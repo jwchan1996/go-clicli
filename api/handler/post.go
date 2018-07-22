@@ -8,6 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
+	"log"
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -51,6 +52,7 @@ func GetPostsByStatus(w http.ResponseWriter, r *http.Request, p httprouter.Param
 	resp, err := db.GetPostsByStatus(status)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
+		log.Printf("%s", err)
 		return
 	} else {
 		res := &def.Posts{Posts: resp}
