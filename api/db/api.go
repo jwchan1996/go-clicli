@@ -28,24 +28,25 @@ func CreateUser(name string, pwd string, role string, qq int, sign string) error
 }
 
 func GetUser(name string) (*def.UserCredential, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id,role,qq,sign FROM users WHERE name = ?")
+	stmtOut, err := dbConn.Prepare("SELECT id,pwd,role,qq,sign FROM users WHERE name = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
 	}
 
 	var id int
+	var pwd string
 	var role string
 	var qq int
 	var sign string
-	err = stmtOut.QueryRow(name).Scan(&id, &role, &qq, &sign)
+	err = stmtOut.QueryRow(name).Scan(&id, &pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-	res := &def.UserCredential{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
+	res := &def.UserCredential{Id: id, Pwd: pwd, Name: name, Role: role, QQ: qq, Desc: sign}
 
 	defer stmtOut.Close()
 

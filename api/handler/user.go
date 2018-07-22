@@ -8,6 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
+	"log"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -43,12 +44,10 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	res, _ := db.GetUser(ubody.Name)
-	if res != nil {
-		if ubody.Pwd == res.Pwd{
-			sendErrorResponse(w, def.Success)
-		}
+	log.Printf("%s", res)
+	if ubody.Pwd == res.Pwd {
+		sendErrorResponse(w, def.Success)
 	}
-
 
 }
 
