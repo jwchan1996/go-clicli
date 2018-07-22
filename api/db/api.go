@@ -34,11 +34,8 @@ func GetUser(name string) (*def.UserCredential, error) {
 		return nil, err
 	}
 
-	var id int
-	var pwd string
-	var role string
-	var qq int
-	var sign string
+	var id, qq int
+	var pwd, role, sign string
 	err = stmtOut.QueryRow(name).Scan(&id, &pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
@@ -95,13 +92,9 @@ func GetPost(id int) (*def.Post, error) {
 		return nil, err
 	}
 	var pid int
-	var title string
-	var content string
-	var status string
-	var sort string
-	var time string
+	var title, content, status, sort, ctime string
 
-	err = stmtOut.QueryRow(id).Scan(&pid, &title, &content, &status, &sort, &time)
+	err = stmtOut.QueryRow(id).Scan(&pid, &title, &content, &status, &sort, &ctime)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
