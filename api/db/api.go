@@ -111,12 +111,12 @@ func GetPost(id int) (*def.Post, error) {
 
 //查找发布状态的所有文章
 
-func GetPostsByStatus(status string) ([]*def.Post, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE status =?")
+func GetPostsByStatus(status string, sort string) ([]*def.Post, error) {
+	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE status =? OR sort=?")
 
 	var res []*def.Post
 
-	rows, err := stmtOut.Query(status)
+	rows, err := stmtOut.Query(status, sort)
 	if err != nil {
 		return res, err
 	}

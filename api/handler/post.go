@@ -48,8 +48,9 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func GetPostsByStatus(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	status := r.URL.Query().Get("status")
+	sort := r.URL.Query().Get("sort")
 
-	resp, err := db.GetPostsByStatus(status)
+	resp, err := db.GetPostsByStatus(status, sort)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)
