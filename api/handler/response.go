@@ -47,3 +47,13 @@ func sendPostsResponse(w http.ResponseWriter, pRes *def.Posts, sc int) {
 
 	io.WriteString(w, string(resStr))
 }
+
+func sendUsersResponse(w http.ResponseWriter, pRes *def.Users, sc int) {
+	w.WriteHeader(sc)
+	resStr, _ := json.Marshal(struct {
+		Code int `json:"code"`
+		*def.Users
+	}{sc, pRes})
+
+	io.WriteString(w, string(resStr))
+}

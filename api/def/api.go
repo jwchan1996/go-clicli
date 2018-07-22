@@ -21,3 +21,7 @@ type Post struct {
 type Posts struct {
 	Posts []*Post `json:"posts"`
 }
+
+type Users struct {
+	Users []*UserCredential `json:"users"`
+}

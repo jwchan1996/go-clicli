@@ -11,10 +11,11 @@ func RegisterHandler() *httprouter.Router {
 
 	router.POST("/register", handler.Register)
 	router.POST("/login", handler.Login)
-	router.GET("/user/:name", handler.GetUser)
 	router.POST("/post/add", handler.AddPost)
-	router.GET("/posts", handler.GetPostsByStatus)
+	router.GET("/user/:name", handler.GetUser)
 	router.GET("/post/:id", handler.GetPost)
+	router.GET("/posts", handler.GetPosts)
+	router.GET("/users", handler.GetUsers)
 
 	return router
 }

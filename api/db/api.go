@@ -50,6 +50,32 @@ func GetUser(name string) (*def.UserCredential, error) {
 	return res, nil
 }
 
+func GetUsers(role string) ([]*def.UserCredential, error) {
+	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE role =?")
+
+	var res []*def.UserCredential
+
+	rows, err := stmtOut.Query(role)
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, qq int
+		var name, role, sign string
+		if err := rows.Scan(&id, &name, &role, &qq, &sign); err != nil {
+			return res, err
+		}
+
+		c := &def.UserCredential{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
+		res = append(res, c)
+	}
+	defer stmtOut.Close()
+
+	return res, nil
+
+}
+
 func DeleteUser(name string, pwd string) error {
 	stmtDel, err := dbConn.Prepare("DELETE FROM users WHERE name=? AND pwd=?")
 	if err != nil {
@@ -111,7 +137,7 @@ func GetPost(id int) (*def.Post, error) {
 
 //查找发布状态的所有文章
 
-func GetPostsByStatus(status string, sort string) ([]*def.Post, error) {
+func GetPosts(status string, sort string) ([]*def.Post, error) {
 	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE status =? OR sort=?")
 
 	var res []*def.Post

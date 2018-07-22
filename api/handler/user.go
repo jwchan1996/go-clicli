@@ -60,3 +60,16 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendUserResponse(w, res, 201)
 	}
 }
+
+func GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	role := r.URL.Query().Get("role")
+
+	resp, err := db.GetUsers(role)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		res := &def.Users{Users: resp}
+		sendPostsResponse(w, res, 201)
+	}
+}
