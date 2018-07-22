@@ -104,7 +104,7 @@ func GetPost(id int) (*def.Post, error) {
 
 	defer stmtOut.Close()
 
-	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Time: time}
+	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Time: ctime}
 
 	return res, nil
 }
