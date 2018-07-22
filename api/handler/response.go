@@ -34,8 +34,8 @@ func sendPostResponse(w http.ResponseWriter, pRes def.Post, sc int) {
 func sendPostsResponse(w http.ResponseWriter, pRes *def.Posts, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
-		Code   int        `json:"code"`
-		Result *def.Posts `json:"result"`
+		Code int `json:"code"`
+		*def.Posts
 	}{sc, pRes})
 	io.WriteString(w, string(resStr))
 }
