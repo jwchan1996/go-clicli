@@ -62,12 +62,41 @@ func GetUser(name string) (*def.UserCredential, error) {
 	return res, nil
 }
 
-func GetUsers(role string) ([]*def.UserCredential, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE role =?")
+func GetUsers(role string, page int, pageSize int) ([]*def.UserCredential, error) {
+	start := pageSize * (page - 1)
+
+	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE role =? limit ?,?")
 
 	var res []*def.UserCredential
 
-	rows, err := stmtOut.Query(role)
+	rows, err := stmtOut.Query(role, start, pageSize)
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, qq int
+		var name, role, sign string
+		if err := rows.Scan(&id, &name, &role, &qq, &sign); err != nil {
+			return res, err
+		}
+
+		c := &def.UserCredential{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
+		res = append(res, c)
+	}
+	defer stmtOut.Close()
+
+	return res, nil
+
+}
+
+func SearchUsers(key string) ([]*def.UserCredential, error) {
+	key = string("%" + key + "%")
+	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE name LIKE ?")
+
+	var res []*def.UserCredential
+
+	rows, err := stmtOut.Query(key)
 	if err != nil {
 		return res, err
 	}

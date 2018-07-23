@@ -53,12 +53,8 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pid := p.ByName("id")
-	pint, err := strconv.Atoi(pid)
-	if err != nil {
-		return
-	}
-	resp, err := db.GetPost(pint)
+	pid,_ := strconv.Atoi(p.ByName("id"))
+	resp, err := db.GetPost(pid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
@@ -71,8 +67,9 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 func GetPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
-
-	resp, err := db.GetPosts(status, sort)
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
+	resp, err := db.GetPosts(status, sort, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)
@@ -81,4 +78,19 @@ func GetPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		res := &def.Posts{Posts: resp}
 		sendPostsResponse(w, res, 201)
 	}
+}
+
+func SearchPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	key := r.URL.Query().Get("key")
+
+	resp, err := db.SearchPosts(key)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		log.Printf("%s", err)
+		return
+	} else {
+		res := &def.Posts{Posts: resp}
+		sendPostsResponse(w, res, 201)
+	}
+
 }

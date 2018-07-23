@@ -94,8 +94,23 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	role := r.URL.Query().Get("role")
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
 
-	resp, err := db.GetUsers(role)
+	resp, err := db.GetUsers(role,page,pageSize)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		res := &def.Users{Users: resp}
+		sendUsersResponse(w, res, 201)
+	}
+}
+
+func SearchUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	key := r.URL.Query().Get("key")
+
+	resp, err := db.SearchUsers(key)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return

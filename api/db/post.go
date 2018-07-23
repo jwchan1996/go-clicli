@@ -83,12 +83,14 @@ func GetPost(id int) (*def.Post, error) {
 	return res, nil
 }
 
-func GetPosts(status string, sort string) ([]*def.Post, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE status =? OR sort=?")
+func GetPosts(status string, sort string, page int, pageSize int) ([]*def.Post, error) {
+	start := pageSize * (page - 1)
+
+	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE status =? OR sort=? ORDER BY time DESC limit ?,?")
 
 	var res []*def.Post
 
-	rows, err := stmtOut.Query(status, sort)
+	rows, err := stmtOut.Query(status, sort, start, pageSize)
 	if err != nil {
 		return res, err
 	}
@@ -107,4 +109,30 @@ func GetPosts(status string, sort string) ([]*def.Post, error) {
 
 	return res, nil
 
+}
+
+func SearchPosts(key string) ([]*def.Post, error) {
+	key = string("%" + key + "%")
+	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE title LIKE ? OR content LIKE ?")
+
+	var res []*def.Post
+
+	rows, err := stmtOut.Query(key, key)
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id int
+		var title, content, status, sort, ctime string
+		if err := rows.Scan(&id, &title, &content, &status, &sort, &ctime); err != nil {
+			return res, err
+		}
+
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Time: ctime}
+		res = append(res, c)
+	}
+	defer stmtOut.Close()
+
+	return res, nil
 }
