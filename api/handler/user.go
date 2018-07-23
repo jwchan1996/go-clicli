@@ -49,6 +49,8 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201)
+		cookie := http.Cookie{Name: "uname", Value: res.Name, Path: "/", MaxAge: 86400}
+		http.SetCookie(w, &cookie)
 	}
 
 }
