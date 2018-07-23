@@ -20,7 +20,7 @@ func RegisterHandler() *httprouter.Router {
 	router.GET("/users", handler.GetUsers)
 	router.GET("/search/posts", handler.SearchPosts)
 	router.GET("/search/users", handler.SearchUsers)
-	router.GET("/info", handler.Auth)
+	router.GET("/auth", handler.Auth)
 
 	return router
 }
