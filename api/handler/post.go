@@ -30,6 +30,28 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 }
 
+func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	pid := p.ByName("id")
+	pint, _ := strconv.Atoi(pid)
+
+	req, _ := ioutil.ReadAll(r.Body)
+	pbody := &def.Post{}
+
+	if err := json.Unmarshal(req, pbody); err != nil {
+		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		return
+	}
+
+	if resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort); err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Time: resp.Time}
+		sendPostResponse(w, res, 201)
+	}
+
+}
+
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid := p.ByName("id")
 	pint, err := strconv.Atoi(pid)

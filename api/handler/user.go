@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
+	"strconv"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -41,8 +42,38 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	resp, _ := db.GetUser(ubody.Name)
-	if ubody.Pwd == resp.Pwd {
+	resp, err := db.GetUser(ubody.Name)
+	if err != nil || len(resp.Pwd) == 0 || ubody.Pwd != resp.Pwd {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	} else {
+		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+		sendUserResponse(w, res, 201)
+	}
+
+}
+
+func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	pid := p.ByName("id")
+	pint, _ := strconv.Atoi(pid)
+
+	req, _ := ioutil.ReadAll(r.Body)
+	ubody := &def.UserCredential{}
+
+	if err := json.Unmarshal(req, ubody); err != nil {
+		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		return
+	}
+
+	if res, _ := db.GetUser(ubody.Name); res != nil {
+		sendErrorResponse(w, def.ErrorUserNameRepeated)
+		return
+	}
+
+	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201)
 	}
@@ -70,6 +101,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	} else {
 		res := &def.Users{Users: resp}
-		sendPostsResponse(w, res, 201)
+		sendUsersResponse(w, res, 201)
 	}
 }
