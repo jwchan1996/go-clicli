@@ -117,13 +117,13 @@ func SearchUsers(key string) ([]*def.UserCredential, error) {
 
 }
 
-func DeleteUser(name string, pwd string) error {
-	stmtDel, err := dbConn.Prepare("DELETE FROM users WHERE name=? AND pwd=?")
+func DeleteUser(id int) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM users WHERE id =?")
 	if err != nil {
 		log.Printf("%s", err)
 		return err
 	}
-	_, err = stmtDel.Exec(name, pwd)
+	_, err = stmtDel.Exec(id)
 	if err != nil {
 		return err
 	}

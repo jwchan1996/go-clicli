@@ -82,6 +82,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 }
 
+func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	uid, _ := strconv.Atoi(p.ByName("id"))
+	err := db.DeleteUser(uid)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		sendErrorResponse(w, def.Success)
+	}
+}
+
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uname := p.ByName("name")
 	resp, err := db.GetUser(uname)
@@ -99,7 +110,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
 
-	resp, err := db.GetUsers(role,page,pageSize)
+	resp, err := db.GetUsers(role, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return

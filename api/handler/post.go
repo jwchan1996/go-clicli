@@ -52,6 +52,17 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 }
 
+func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params)  {
+	pid,_ := strconv.Atoi(p.ByName("id"))
+	err := db.DeletePost(pid)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		sendErrorResponse(w,def.Success)
+	}
+}
+
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid,_ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetPost(pid)
