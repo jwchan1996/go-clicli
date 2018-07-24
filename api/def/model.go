@@ -16,7 +16,7 @@ type Post struct {
 	Status  string `json:"status"`
 	Sort    string `json:"sort"`
 	Time    string `json:"time"`
-	Uid     int    `json:"uid"`
+	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`
 }
