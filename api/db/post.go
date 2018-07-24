@@ -60,7 +60,7 @@ func DeletePost(id int) error {
 
 func GetPost(id int) (*def.Post, error) {
 	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name,users.qq FROM posts 
-										INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
+INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	if err != nil {
 		return nil, err
 	}
