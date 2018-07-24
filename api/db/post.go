@@ -4,6 +4,7 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"time"
 	"database/sql"
+	"log"
 )
 
 func AddPost(title string, content string, status string, sort string, uid int) (*def.Post, error) {
@@ -85,13 +86,19 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 func GetPosts(status string, sort string, uid int, page int, pageSize int) ([]*def.Post, error) {
 	start := pageSize * (page - 1)
 
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name ,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
+	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
 WHERE posts.status =? OR posts.sort=? OR posts.uid =? ORDER BY time DESC limit ?,?`)
+
+	if err != nil {
+		log.Printf("%s", err)
+		return nil, err
+	}
 
 	var res []*def.Post
 
 	rows, err := stmtOut.Query(status, sort, uid, start, pageSize)
 	if err != nil {
+		log.Printf("%s", err)
 		return res, err
 	}
 
@@ -99,6 +106,7 @@ WHERE posts.status =? OR posts.sort=? OR posts.uid =? ORDER BY time DESC limit ?
 		var id, uid int
 		var title, content, status, sort, ctime, uname, uqq string
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &ctime, &uid, &uname, &uqq); err != nil {
+			log.Printf("%s", err)
 			return res, err
 		}
 

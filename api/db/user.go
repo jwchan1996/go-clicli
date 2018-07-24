@@ -23,31 +23,49 @@ func CreateUser(name string, pwd string, role string, qq int, sign string) error
 }
 
 func UpdateUser(id int, name string, pwd string, role string, qq int, sign string) (*def.UserCredential, error) {
-	stmtIns, err := dbConn.Prepare("UPDATE users SET name=?,pwd=?,role=?,qq=?,sign=? WHERE id =?")
-	if err != nil {
-		return nil, err
-	}
-	_, err = stmtIns.Exec(&name, &pwd, &role, &qq, &sign, &id)
-	if err != nil {
-		return nil, err
-	}
-	defer stmtIns.Close()
+	if pwd == "" {
+		stmtIns, err := dbConn.Prepare("UPDATE users SET name=?,role=?,qq=?,sign=? WHERE id =?")
+		if err != nil {
+			return nil, err
+		}
+		_, err = stmtIns.Exec(&name, &role, &qq, &sign, &id)
+		if err != nil {
+			return nil, err
+		}
+		defer stmtIns.Close()
 
-	res := &def.UserCredential{Id: id, Name: name, Pwd: pwd, QQ: qq, Role: role, Desc: sign}
-	defer stmtIns.Close()
-	return res, err
+		res := &def.UserCredential{Id: id, Name: name, QQ: qq, Role: role, Desc: sign}
+		defer stmtIns.Close()
+		return res, err
+	} else {
+		pwd = util.Cipher(pwd)
+		stmtIns, err := dbConn.Prepare("UPDATE users SET name=?,pwd=?,role=?,qq=?,sign=? WHERE id =?")
+		if err != nil {
+			return nil, err
+		}
+		_, err = stmtIns.Exec(&name, &pwd, &role, &qq, &sign, &id)
+		if err != nil {
+			return nil, err
+		}
+		defer stmtIns.Close()
+
+		res := &def.UserCredential{Id: id, Name: name, Pwd: pwd, QQ: qq, Role: role, Desc: sign}
+		defer stmtIns.Close()
+		return res, err
+	}
+
 }
 
-func GetUser(uid int) (*def.UserCredential, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id,name,pwd,role,qq,sign FROM users WHERE id = ?")
+func GetUser(name string) (*def.UserCredential, error) {
+	stmtOut, err := dbConn.Prepare("SELECT id,pwd,role,qq,sign FROM users WHERE name = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
 	}
 
 	var id, qq int
-	var name, pwd, role, sign string
-	err = stmtOut.QueryRow(uid).Scan(&id, &name, &pwd, &role, &qq, &sign)
+	var pwd, role, sign string
+	err = stmtOut.QueryRow(name).Scan(&id, &pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}

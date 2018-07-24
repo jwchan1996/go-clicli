@@ -70,11 +70,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if res, _ := db.GetUser(ubody.Name); res != nil {
-		sendErrorResponse(w, def.ErrorUserNameRepeated)
-		return
-	}
-
 	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
@@ -97,8 +92,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	uid, _ := strconv.Atoi(p.ByName("id"))
-	resp, err := db.GetUser(uid)
+	uname := p.ByName("name")
+	resp, err := db.GetUser(uname)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
