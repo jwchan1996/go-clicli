@@ -11,7 +11,6 @@ func CreateUser(name string, pwd string, role string, qq int, sign string) error
 	pwd = util.Cipher(pwd)
 	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq,sign) VALUES (?,?,?,?,?)")
 	if err != nil {
-		log.Printf("%s", err)
 		return err
 	}
 
@@ -39,16 +38,16 @@ func UpdateUser(id int, name string, pwd string, role string, qq int, sign strin
 	return res, err
 }
 
-func GetUser(name string) (*def.UserCredential, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id,pwd,role,qq,sign FROM users WHERE name = ?")
+func GetUser(uid int) (*def.UserCredential, error) {
+	stmtOut, err := dbConn.Prepare("SELECT id,name,pwd,role,qq,sign FROM users WHERE id = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
 	}
 
 	var id, qq int
-	var pwd, role, sign string
-	err = stmtOut.QueryRow(name).Scan(&id, &pwd, &role, &qq, &sign)
+	var name, pwd, role, sign string
+	err = stmtOut.QueryRow(uid).Scan(&id, &name, &pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}

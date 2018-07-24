@@ -9,7 +9,6 @@ import (
 	"github.com/132yse/acgzone-server/api/db"
 	"strconv"
 	"github.com/132yse/acgzone-server/api/util"
-	"log"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -46,9 +45,6 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	resp, err := db.GetUser(ubody.Name)
 	pwd := util.Cipher(ubody.Pwd)
-	log.Printf("%s", pwd)
-	log.Printf("%s", resp.Pwd)
-
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
@@ -101,8 +97,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	uname := p.ByName("name")
-	resp, err := db.GetUser(uname)
+	uid, _ := strconv.Atoi(p.ByName("id"))
+	resp, err := db.GetUser(uid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
