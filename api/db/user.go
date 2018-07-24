@@ -2,7 +2,7 @@ package db
 
 import (
 	"log"
-	"util"
+	"github.com/132yse/acgzone-server/api/util"
 	"github.com/132yse/acgzone-server/api/def"
 	"database/sql"
 )

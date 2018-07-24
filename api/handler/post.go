@@ -67,7 +67,6 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetPost(pid)
 	if err != nil {
-		log.Printf("%s", err)
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {

@@ -7,8 +7,9 @@ import (
 )
 
 func Auth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	_, err := r.Cookie("uname")
-	if err != nil {
+	cookie, err := r.Cookie("uname")
+	if err != nil || cookie == nil {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	} else {
 		sendErrorResponse(w, def.Success)

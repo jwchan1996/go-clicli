@@ -8,17 +8,17 @@ import (
 )
 
 func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
-	w.WriteHeader(errRes.Code)
 	resStr, _ := json.Marshal(&errRes)
 	io.WriteString(w, string(resStr))
 }
 
-func sendUserResponse(w http.ResponseWriter, uRes def.UserCredential, sc int) {
+func sendUserResponse(w http.ResponseWriter, uRes def.UserCredential, sc int, msg string) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
 		Code int                `json:"code"`
+		Msg  string             `json:"msg,omitempty"`
 		User def.UserCredential `json:"user"`
-	}{sc, uRes})
+	}{sc, msg, uRes})
 
 	io.WriteString(w, string(resStr))
 

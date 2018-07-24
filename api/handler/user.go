@@ -8,6 +8,8 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
 	"strconv"
+	"github.com/132yse/acgzone-server/api/util"
+	"log"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -43,14 +45,19 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	resp, err := db.GetUser(ubody.Name)
-	if err != nil || len(resp.Pwd) == 0 || ubody.Pwd != resp.Pwd {
+	pwd := util.Cipher(ubody.Pwd)
+	log.Printf("%s", pwd)
+	log.Printf("%s", resp.Pwd)
+
+
+	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, res, 201)
-		cookie := http.Cookie{Name: "uname", Value: res.Name, Path: "/", MaxAge: 86400}
+		cookie := http.Cookie{Name: "uname", Value: res.Name}
 		http.SetCookie(w, &cookie)
+		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
 
 }
@@ -77,7 +84,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, res, 201)
+		sendUserResponse(w, res, 201, "更新成功啦")
 	}
 
 }
@@ -101,7 +108,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, res, 201)
+		sendUserResponse(w, res, 201, "")
 	}
 }
 
