@@ -16,6 +16,9 @@ type Post struct {
 	Status  string `json:"status"`
 	Sort    string `json:"sort"`
 	Time    string `json:"time"`
+	Uid     int    `json:"uid"`
+	Uname   string `json:"uname,omitempty"`
+	Uqq     string `json:"uqq,omitempty"`
 }
 
 type Posts struct {

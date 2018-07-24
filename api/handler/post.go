@@ -20,11 +20,11 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort); err != nil {
+	if resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Uid); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Time: resp.Time}
+		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Time: resp.Time, Uid: resp.Uid}
 		sendPostResponse(w, res, 201)
 	}
 
@@ -52,25 +52,26 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 }
 
-func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params)  {
-	pid,_ := strconv.Atoi(p.ByName("id"))
+func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	pid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeletePost(pid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		sendErrorResponse(w,def.Success)
+		sendErrorResponse(w, def.Success)
 	}
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pid,_ := strconv.Atoi(p.ByName("id"))
+	pid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetPost(pid)
 	if err != nil {
+		log.Printf("%s", err)
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Time: resp.Time}
+		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
 		sendPostResponse(w, res, 201)
 	}
 }
@@ -78,9 +79,10 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 func GetPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
+	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	resp, err := db.GetPosts(status, sort, page, pageSize)
+	resp, err := db.GetPosts(status, sort, uid, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)
