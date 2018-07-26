@@ -1,8 +1,7 @@
 @echo off
 cd api
 SET CGO_ENABLED=0
-SET GOOS=linux
+SET GOOS=windows
 SET GOARCH=amd64
-go build -o ../bin/api
+go install
 cd ../
-echo Package success~~~
