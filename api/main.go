@@ -10,7 +10,7 @@ func RegisterHandler() *httprouter.Router {
 	router := httprouter.New()
 
 	router.POST("/register", handler.Register)
-	router.POST("/login", handler.Login)
+	router.POST("/api/login", handler.Login)
 	router.POST("/user/update/:id", handler.UpdateUser)
 	router.POST("/user/delete/:id", handler.DeleteUser)
 	router.POST("/post/add", handler.AddPost)

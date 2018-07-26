@@ -51,7 +51,7 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		cookie := http.Cookie{Name: "uname", Value: res.Name}
+		cookie := http.Cookie{Name: "uname", Value: res.Name, Path: "/"}
 		http.SetCookie(w, &cookie)
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
