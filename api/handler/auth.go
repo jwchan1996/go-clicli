@@ -6,7 +6,7 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 )
 
-func Auth(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	cookie, err := r.Cookie("uname")
 	if err != nil || cookie == nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)

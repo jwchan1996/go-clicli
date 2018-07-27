@@ -11,7 +11,7 @@ import (
 	"log"
 )
 
-func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
 	pbody := &def.Post{}
 
@@ -75,7 +75,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func GetPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func GetPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
@@ -92,7 +92,7 @@ func GetPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func SearchPosts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func SearchPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchPosts(key)

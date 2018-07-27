@@ -11,7 +11,7 @@ import (
 	"github.com/132yse/acgzone-server/api/util"
 )
 
-func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.UserCredential{}
 
@@ -34,7 +34,7 @@ func Register(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 }
 
-func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.UserCredential{}
 
@@ -103,7 +103,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	role := r.URL.Query().Get("role")
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
@@ -118,7 +118,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func SearchUsers(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func SearchUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchUsers(key)
