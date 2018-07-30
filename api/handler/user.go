@@ -53,7 +53,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		cookieId := http.Cookie{Name: "name", Value: uanme, Path: "/", Domain: "chinko.cc"}
+		cookieId := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
 		http.SetCookie(w, &cookieId)
 		http.SetCookie(w, &cookieQq)
@@ -104,7 +104,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	uname := p.ByName("id")
+	uname := p.ByName("name")
 	resp, err := db.GetUser(uname)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
