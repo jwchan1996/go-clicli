@@ -119,11 +119,12 @@ WHERE posts.status =? OR posts.sort=? OR posts.uid =? ORDER BY time DESC limit ?
 
 }
 
-func GetPostsBoth(status string, sort string, page int, uid int, pageSize int) ([]*def.Post, error) {
+func GetPostsBoth(status string, sort string, uid int, page int, pageSize int) ([]*def.Post, error) {
 	start := pageSize * (page - 1)
+	log.Printf("%x", start)
 
 	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
-WHERE posts.status =? AND (posts.sort=? OR posts.uid =?) ORDER BY time DESC limit ?,?`)
+WHERE (posts.sort=? OR posts.uid =?) AND posts.status =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
 		log.Printf("%s", err)
@@ -132,7 +133,7 @@ WHERE posts.status =? AND (posts.sort=? OR posts.uid =?) ORDER BY time DESC limi
 
 	var res []*def.Post
 
-	rows, err := stmtOut.Query(status, sort, uid, start, pageSize)
+	rows, err := stmtOut.Query(sort, uid, status, start, pageSize)
 	if err != nil {
 		log.Printf("%s", err)
 		return res, err
