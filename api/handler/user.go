@@ -51,11 +51,21 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		cookie := http.Cookie{Name: "uname", Value: res.Name, Path: "/", Domain: "chinko.cc"}
-		http.SetCookie(w, &cookie)
+		cookieId := http.Cookie{Name: "uid", Value: string(res.Id), Path: "/", Domain: "chinko.cc"}
+		cookieQq := http.Cookie{Name: "uqq", Value: string(res.QQ), Path: "/", Domain: "chinko.cc"}
+		http.SetCookie(w, &cookieId)
+		http.SetCookie(w, &cookieQq)
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
 
+}
+
+func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	cookieId := http.Cookie{Name: "uid", Path: "/", Domain: "chinko.cc", MaxAge: -1}
+	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "chinko.cc", MaxAge: -1}
+	http.SetCookie(w, &cookieId)
+	http.SetCookie(w, &cookieQq)
+	sendErrorResponse(w, def.Success)
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

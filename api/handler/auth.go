@@ -7,7 +7,7 @@ import (
 )
 
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	cookie, err := r.Cookie("uname")
+	cookie, err := r.Cookie("uqq")
 	if err != nil || cookie == nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
