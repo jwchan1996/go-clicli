@@ -75,13 +75,29 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func GetPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func GetPostsType(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	resp, err := db.GetPosts(status, sort, uid, page, pageSize)
+	resp, err := db.GetPostsByOneOf(status, sort, uid, page, pageSize)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		log.Printf("%s", err)
+		return
+	} else {
+		res := &def.Posts{Posts: resp}
+		sendPostsResponse(w, res, 201)
+	}
+}
+
+func GetPostsAlso(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	status := r.URL.Query().Get("status")
+	sort := r.URL.Query().Get("sort")
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
+	resp, err := db.GetPostsByStatusAndSort(status, sort,page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)

@@ -83,11 +83,11 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	return res, nil
 }
 
-func GetPosts(status string, sort string, uid int, page int, pageSize int) ([]*def.Post, error) {
+func GetPostsByOneOf(status string, sort string, uid int, page int, pageSize int) ([]*def.Post, error) {
 	start := pageSize * (page - 1)
 
 	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
-WHERE posts.status =? OR posts.sort=? OR posts.uid =? OR (posts.status =? AND posts.sort=?) ORDER BY time DESC limit ?,?`)
+WHERE posts.status =? OR posts.sort=? OR posts.uid =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
 		log.Printf("%s", err)
@@ -96,7 +96,43 @@ WHERE posts.status =? OR posts.sort=? OR posts.uid =? OR (posts.status =? AND po
 
 	var res []*def.Post
 
-	rows, err := stmtOut.Query(status, sort, uid, status, sort, start, pageSize)
+	rows, err := stmtOut.Query(status, sort, uid, start, pageSize)
+	if err != nil {
+		log.Printf("%s", err)
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, uid int
+		var title, content, status, sort, ctime, uname, uqq string
+		if err := rows.Scan(&id, &title, &content, &status, &sort, &ctime, &uid, &uname, &uqq); err != nil {
+			log.Printf("%s", err)
+			return res, err
+		}
+
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
+		res = append(res, c)
+	}
+	defer stmtOut.Close()
+
+	return res, nil
+
+}
+
+func GetPostsByStatusAndSort(status string, sort string, page int, pageSize int) ([]*def.Post, error) {
+	start := pageSize * (page - 1)
+
+	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
+WHERE posts.status =? AND posts.sort=? ORDER BY time DESC limit ?,?`)
+
+	if err != nil {
+		log.Printf("%s", err)
+		return nil, err
+	}
+
+	var res []*def.Post
+
+	rows, err := stmtOut.Query(status, sort, start, pageSize)
 	if err != nil {
 		log.Printf("%s", err)
 		return res, err
