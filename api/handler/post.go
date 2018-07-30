@@ -75,13 +75,13 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func GetPostsType(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func GetPostsOneOf(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	resp, err := db.GetPostsType(status, sort, uid, page, pageSize)
+	resp, err := db.GetPostsOneOf(status, sort, uid, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)

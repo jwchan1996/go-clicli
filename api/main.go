@@ -18,7 +18,7 @@ func RegisterHandler() *httprouter.Router {
 	router.POST("/post/update/:id", handler.UpdatePost)
 	router.GET("/user/:name", handler.GetUser)
 	router.GET("/post/:id", handler.GetPost)
-	router.GET("/posts/type", handler.GetPostsOne)
+	router.GET("/posts/type", handler.GetPostsOneOf)
 	router.GET("/posts/both", handler.GetPostsBoth)
 	router.GET("/users", handler.GetUsers)
 	router.GET("/search/posts", handler.SearchPosts)

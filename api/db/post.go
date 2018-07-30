@@ -83,7 +83,7 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	return res, nil
 }
 
-func GetPostsType(status string, sort string, uid int, page int, pageSize int) ([]*def.Post, error) {
+func GetPostsOneOf(status string, sort string, uid int, page int, pageSize int) ([]*def.Post, error) {
 	start := pageSize * (page - 1)
 
 	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
