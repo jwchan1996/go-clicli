@@ -9,6 +9,7 @@ import (
 	"github.com/132yse/acgzone-server/api/db"
 	"strconv"
 	"github.com/132yse/acgzone-server/api/util"
+	"encoding/base64"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -51,8 +52,9 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		cookieId := http.Cookie{Name: "uid", Value: string(res.Id), Path: "/", Domain: "chinko.cc"}
-		cookieQq := http.Cookie{Name: "uqq", Value: string(res.QQ), Path: "/", Domain: "chinko.cc"}
+		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
+		cookieId := http.Cookie{Name: "name", Value: uanme, Path: "/", Domain: "chinko.cc"}
+		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
 		http.SetCookie(w, &cookieId)
 		http.SetCookie(w, &cookieQq)
 		sendUserResponse(w, res, 201, "登陆成功啦！")
@@ -61,7 +63,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	cookieId := http.Cookie{Name: "uid", Path: "/", Domain: "chinko.cc", MaxAge: -1}
+	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: "chinko.cc", MaxAge: -1}
 	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "chinko.cc", MaxAge: -1}
 	http.SetCookie(w, &cookieId)
 	http.SetCookie(w, &cookieQq)
@@ -102,7 +104,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	uname := p.ByName("name")
+	uname := p.ByName("id")
 	resp, err := db.GetUser(uname)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
