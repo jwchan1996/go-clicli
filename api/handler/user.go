@@ -21,7 +21,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if res, _ := db.GetUser(ubody.Name); res != nil {
+	if res, _ := db.GetUser(ubody.Name,0); res != nil {
 		sendErrorResponse(w, def.ErrorUserNameRepeated)
 		return
 	}
@@ -44,7 +44,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	resp, err := db.GetUser(ubody.Name)
+	resp, err := db.GetUser(ubody.Name,0)
 	pwd := util.Cipher(ubody.Pwd)
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
