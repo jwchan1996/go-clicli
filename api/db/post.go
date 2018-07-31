@@ -9,7 +9,7 @@ import (
 
 func AddPost(title string, content string, status string, sort string, uid int) (*def.Post, error) {
 	t := time.Now()
-	ctime := t.Format("2006-01-02")
+	ctime := t.Format("2006-01-02 15:04")
 	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,time,uid) VALUES (?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func AddPost(title string, content string, status string, sort string, uid int) 
 
 func UpdatePost(id int, title string, content string, status string, sort string) (*def.Post, error) {
 	t := time.Now()
-	ctime := t.Format("2006-01-02")
+	ctime := t.Format("2006-01-02 15:04")
 	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,time=? WHERE id =?")
 	if err != nil {
 		return nil, err

@@ -56,16 +56,16 @@ func UpdateUser(id int, name string, pwd string, role string, qq int, sign strin
 
 }
 
-func GetUser(name string) (*def.UserCredential, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id,pwd,role,qq,sign FROM users WHERE name = ?")
+func GetUser(name string, id int) (*def.UserCredential, error) {
+	stmtOut, err := dbConn.Prepare("SELECT pwd,role,qq,sign FROM users WHERE name = ? OR id = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
 	}
 
-	var id, qq int
+	var qq int
 	var pwd, role, sign string
-	err = stmtOut.QueryRow(name).Scan(&id, &pwd, &role, &qq, &sign)
+	err = stmtOut.QueryRow(name, id).Scan(&pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}

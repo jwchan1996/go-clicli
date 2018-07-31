@@ -104,8 +104,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	uname := p.ByName("name")
-	resp, err := db.GetUser(uname)
+	uname := r.URL.Query().Get("uname")
+	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
+	resp, err := db.GetUser(uname, uid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
