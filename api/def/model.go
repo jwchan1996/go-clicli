@@ -26,7 +26,6 @@ type Comment struct {
 	Content string `json:"content"`
 	Time    string `json:"time"`
 	Pid     int    `json:"pid"`
-	Ptitle  string `json:"ptitle,omitempty"`
 	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`

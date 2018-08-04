@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"github.com/132yse/acgzone-server/api/db"
 	"log"
+	"strconv"
 )
 
 func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -29,4 +30,31 @@ func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendCommentResponse(w, res, 201)
 	}
 
+}
+
+func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
+	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
+	resp, err := db.GetComments(pid,uid, page, pageSize)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		log.Printf("%s", err)
+		return
+	} else {
+		res := &def.Comments{Posts: resp}
+		sendCommentsResponse(w, res, 201)
+	}
+}
+
+func DeleteComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	pid, _ := strconv.Atoi(p.ByName("id"))
+	err := db.DeleteComment(pid)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		sendErrorResponse(w, def.Success)
+	}
 }
