@@ -21,10 +21,25 @@ type Post struct {
 	Uqq     string `json:"uqq,omitempty"`
 }
 
+type Comment struct {
+	Id      int    `json:"id,omitempty"`
+	Content string `json:"content"`
+	Time    string `json:"time"`
+	Pid     int    `json:"pid"`
+	Ptitle  string `json:"ptitle,omitempty"`
+	Uid     int    `json:"uid,omitempty"`
+	Uname   string `json:"uname,omitempty"`
+	Uqq     string `json:"uqq,omitempty"`
+}
+
 type Posts struct {
 	Posts []*Post `json:"posts"`
 }
 
 type Users struct {
 	Users []*UserCredential `json:"users"`
+}
+
+type Comments struct {
+	Posts []*Comment `json:"comments"`
 }
