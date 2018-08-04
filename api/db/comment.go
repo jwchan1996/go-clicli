@@ -27,7 +27,7 @@ func AddComment(content string, pid int, uid int) (*def.Comment, error) {
 func GetComments(pid int, uid int, page int, pageSize int) ([]*def.Comment, error) {
 	start := pageSize * (page - 1)
 
-	stmtOut, err := dbConn.Prepare(`SELECT comments.id,comments.content,comments.time,posts.id,posts.title,users.id,users.name,users.qq FROM comments INNER JOIN users ON comments.uid = users.id 
+	stmtOut, err := dbConn.Prepare(`SELECT comments.id,comments.content,comments.time,comments.pid,users.id,users.name,users.qq FROM comments INNER JOIN users ON comments.uid = users.id 
 WHERE comments.pid=? OR comments.uid =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
@@ -51,7 +51,7 @@ WHERE comments.pid=? OR comments.uid =? ORDER BY time DESC limit ?,?`)
 			return res, err
 		}
 
-		c := &def.Comment{Id: id, Content: content, Time: ctime,Pid:pid, Uid: uid, Uname: uname, Uqq: uqq}
+		c := &def.Comment{Id: id, Content: content, Time: ctime, Pid: pid, Uid: uid, Uname: uname, Uqq: uqq}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()
