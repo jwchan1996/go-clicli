@@ -10,12 +10,14 @@ import (
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,tag,time,uid) VALUES (?,?,?,?,?,?)")
+	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,tag,time,uid) VALUES (?,?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
+		log.Printf("%s", err)
 	}
 	_, err = stmtIns.Exec(title, content, status, sort, tag, ctime, uid)
 	if err != nil {
+		log.Printf("%s", err)
 		return nil, err
 	}
 	defer stmtIns.Close()
@@ -31,9 +33,12 @@ func UpdatePost(id int, title string, content string, status string, sort string
 	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,tag=?,time=? WHERE id =?")
 	if err != nil {
 		return nil, err
+		log.Printf("%s", err)
 	}
 	_, err = stmtIns.Exec(&title, &content, &status, &sort, &ctime, &id, &tag)
 	if err != nil {
+		log.Printf("%s", err)
+
 		return nil, err
 	}
 	defer stmtIns.Close()
@@ -60,7 +65,7 @@ func DeletePost(id int) error {
 }
 
 func GetPost(id int) (*def.Post, error) {
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts 
+	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts 
 INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	if err != nil {
 		return nil, err
@@ -86,7 +91,7 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 func GetPostsOneOf(status string, sort string, tag string, uid int, page int, pageSize int) ([]*def.Post, error) {
 	start := pageSize * (page - 1)
 
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
+	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
 WHERE posts.status =? OR posts.sort=? OR posts.tag=? OR posts.uid =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
@@ -123,7 +128,7 @@ func GetPostsBoth(status string, sort string, tag string, uid int, page int, pag
 	start := pageSize * (page - 1)
 	log.Printf("%x", start)
 
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
+	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
 WHERE (posts.sort=? OR posts.uid =? OR posts.tag=?) AND posts.status =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
@@ -158,7 +163,7 @@ WHERE (posts.sort=? OR posts.uid =? OR posts.tag=?) AND posts.status =? ORDER BY
 
 func SearchPosts(key string) ([]*def.Post, error) {
 	key = string("%" + key + "%")
-	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id WHERE title LIKE ? OR content LIKE ?")
+	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.type,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id WHERE title LIKE ? OR content LIKE ?")
 
 	var res []*def.Post
 
