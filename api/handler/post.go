@@ -70,7 +70,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Type: resp.Type Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
+		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Type: resp.Type, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
 		sendPostResponse(w, res, 201)
 	}
 }
