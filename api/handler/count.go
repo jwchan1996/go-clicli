@@ -19,3 +19,6 @@ func GetCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendCountResponse(w, res, 201)
 	}
 }
+
+func AddPageView(w http.ResponseWriter, r *http.Request, p httprouter.Params){
+}

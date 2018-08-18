@@ -18,6 +18,8 @@ func RegisterHandler() *httprouter.Router {
 	router.POST("/post/update/:id", handler.UpdatePost)
 	router.POST("/comment/add", handler.AddComment)
 	router.POST("/comment/delete/:id", handler.DeleteComment)
+	router.POST("/logout", handler.Logout)
+	router.POST("/pv/add", handler.AddPageView)
 	router.GET("/user", handler.GetUser)
 	router.GET("/post/:id", handler.GetPost)
 	router.GET("/comments", handler.GetComments)
@@ -27,7 +29,7 @@ func RegisterHandler() *httprouter.Router {
 	router.GET("/search/posts", handler.SearchPosts)
 	router.GET("/search/users", handler.SearchUsers)
 	router.GET("/auth", handler.Auth)
-	router.POST("/logout", handler.Logout)
+	router.GET("/count/:pid", handler.GetCount)
 
 	return router
 }

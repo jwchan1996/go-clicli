@@ -78,7 +78,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 func GetPostsOneOf(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
-	ptype := r.URL.Query().Get("sort")
+	ptype := r.URL.Query().Get("type")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
