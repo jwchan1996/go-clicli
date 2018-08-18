@@ -15,7 +15,7 @@ func GetCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Count{Pid: resp.Pid,Pv:resp.Pv,Cv:resp.Cv}
+		res := def.Count{Pid: resp.Pid, Pv: resp.Pv, Cv: resp.Cv}
 		sendCountResponse(w, res, 201)
 	}
 }
