@@ -20,22 +20,24 @@ func AddPageView(pv int, pid int) error {
 	return nil
 }
 
-func GetPageView(pid int) (*def.Pv, error) {
+func GetCount(pid int) (*def.Count, error) {
 	stmtOut, err := dbConn.Prepare("SELECT pid,pv FROM pv WHERE pid = ?")
+	stmtCount, err := dbConn.Prepare("SELECT COUNT(*) FROM comments WHERE pid = ?")
 	if err != nil {
 		log.Printf("%s", err)
 		return nil, err
 	}
 
-	var pv int
+	var pv, cv int
 	err = stmtOut.QueryRow(pid).Scan(&pid, &pv)
+	err = stmtCount.QueryRow(pid).Scan(&pid, &cv)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-	res := &def.Pv{Pid: pid, Pv: pv}
+	res := &def.Count{Pid: pid, Pv: pv, Cv: cv}
 
 	defer stmtOut.Close()
 

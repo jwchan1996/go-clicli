@@ -158,7 +158,7 @@ WHERE (posts.sort=? OR posts.uid =?) AND posts.status =? ORDER BY time DESC limi
 
 func SearchPosts(key string) ([]*def.Post, error) {
 	key = string("%" + key + "%")
-	stmtOut, err := dbConn.Prepare("SELECT id, title, content, status, sort, time FROM posts WHERE title LIKE ? OR content LIKE ?")
+	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id WHERE title LIKE ? OR content LIKE ?")
 
 	var res []*def.Post
 
@@ -168,13 +168,13 @@ func SearchPosts(key string) ([]*def.Post, error) {
 	}
 
 	for rows.Next() {
-		var id int
-		var title, content, status, sort, ctime string
-		if err := rows.Scan(&id, &title, &content, &status, &sort, &ctime); err != nil {
+		var id, uid int
+		var title, content, status, sort, ctime, uname, uqq string
+		if err := rows.Scan(&id, &title, &content, &status, &sort, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
 
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Time: ctime}
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()
