@@ -36,14 +36,13 @@ func UpdatePost(id int, title string, content string, status string, sort string
 		return nil, err
 
 	}
-	_, err = stmtIns.Exec(&title, &content, &status, &sort, &ctime, &id, &tag)
+	_, err = stmtIns.Exec(&title, &content, &status, &sort, &tag, &ctime, &id)
 	if err != nil {
-
 		return nil, err
 	}
 	defer stmtIns.Close()
 
-	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Time: ctime}
+	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime}
 	defer stmtIns.Close()
 	return res, err
 }
