@@ -10,34 +10,34 @@ import (
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,tag,time,uid) VALUES (?,?,?,?,?,?,?)")
+	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,type,time,uid) VALUES (?,?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
-		log.Printf("%s", err)
+
 	}
 	_, err = stmtIns.Exec(title, content, status, sort, tag, ctime, uid)
 	if err != nil {
-		log.Printf("%s", err)
+
 		return nil, err
 	}
 	defer stmtIns.Close()
 
 	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid}
 	defer stmtIns.Close()
+
 	return res, err
 }
 
 func UpdatePost(id int, title string, content string, status string, sort string, tag string) (*def.Post, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,tag=?,time=? WHERE id =?")
+	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,type=?,time=? WHERE id =?")
 	if err != nil {
 		return nil, err
-		log.Printf("%s", err)
+
 	}
 	_, err = stmtIns.Exec(&title, &content, &status, &sort, &ctime, &id, &tag)
 	if err != nil {
-		log.Printf("%s", err)
 
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func GetPostsOneOf(status string, sort string, tag string, uid int, page int, pa
 	start := pageSize * (page - 1)
 
 	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
-WHERE posts.status =? OR posts.sort=? OR posts.tag=? OR posts.uid =? ORDER BY time DESC limit ?,?`)
+WHERE posts.status =? OR posts.sort=? OR posts.type=? OR posts.uid =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
 		log.Printf("%s", err)
@@ -129,10 +129,9 @@ func GetPostsBoth(status string, sort string, tag string, uid int, page int, pag
 	log.Printf("%x", start)
 
 	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
-WHERE (posts.sort=? OR posts.uid =? OR posts.tag=?) AND posts.status =? ORDER BY time DESC limit ?,?`)
+WHERE (posts.sort=? OR posts.uid =? OR posts.type=?) AND posts.status =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
-		log.Printf("%s", err)
 		return nil, err
 	}
 
@@ -140,7 +139,6 @@ WHERE (posts.sort=? OR posts.uid =? OR posts.tag=?) AND posts.status =? ORDER BY
 
 	rows, err := stmtOut.Query(sort, uid, tag, status, start, pageSize)
 	if err != nil {
-		log.Printf("%s", err)
 		return res, err
 	}
 
@@ -148,7 +146,6 @@ WHERE (posts.sort=? OR posts.uid =? OR posts.tag=?) AND posts.status =? ORDER BY
 		var id, uid int
 		var title, content, status, sort, tag, ctime, uname, uqq string
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
-			log.Printf("%s", err)
 			return res, err
 		}
 
