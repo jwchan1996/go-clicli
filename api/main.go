@@ -19,7 +19,7 @@ func RegisterHandler() *httprouter.Router {
 	router.POST("/comment/add", handler.AddComment)
 	router.POST("/comment/delete/:id", handler.DeleteComment)
 	router.POST("/logout", handler.Logout)
-	//router.POST("/pv/add", handler.AddPageView)
+	router.GET("/pv/add/:pid", handler.AddPageView)
 	router.GET("/user", handler.GetUser)
 	router.GET("/post/:id", handler.GetPost)
 	router.GET("/comments", handler.GetComments)

@@ -20,5 +20,12 @@ func GetCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func AddPageView(w http.ResponseWriter, r *http.Request, p httprouter.Params){
+func AddPageView(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	pid, _ := strconv.Atoi(p.ByName("pid"))
+
+	err := db.AddPageView(pid)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	}
 }
