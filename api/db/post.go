@@ -79,7 +79,6 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-
 	defer stmtOut.Close()
 
 	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
@@ -113,9 +112,10 @@ WHERE posts.status =? OR posts.sort=? OR posts.type=? OR posts.uid =? ORDER BY t
 			log.Printf("%s", err)
 			return res, err
 		}
+		count, _ := GetCount(id)
+		p := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
-		res = append(res, c)
+		res = append(res, p)
 	}
 	defer stmtOut.Close()
 
@@ -147,8 +147,8 @@ WHERE (posts.sort=? OR posts.uid =? OR posts.type=?) AND posts.status =? ORDER B
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
-
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
+		count, _ := GetCount(id)
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()
@@ -174,8 +174,9 @@ func SearchPosts(key string) ([]*def.Post, error) {
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
+		count, _ := GetCount(id)
 
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()
