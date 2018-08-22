@@ -52,7 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		token := util.CreateToken(resp.Id)
+		token := util.CreateToken(resp.QQ)
 		cookieId := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
 		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
