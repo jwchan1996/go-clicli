@@ -36,7 +36,6 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pint, _ := strconv.Atoi(pid)
 	req, _ := ioutil.ReadAll(r.Body)
 	pbody := &def.Post{}
-
 	if err := json.Unmarshal(req, pbody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
 		return

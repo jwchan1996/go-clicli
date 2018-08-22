@@ -54,10 +54,14 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
 		token := util.CreateToken(resp.QQ)
-		cookieId := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
-		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
+		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
+		cookieId := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: "chinko.cc", HttpOnly: true}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
+		cookieRole := http.Cookie{Name: "role", Value: resp.Role, Path: "/", Domain: "chinko.cc", HttpOnly: true}
+		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
+		http.SetCookie(w, &cookieName)
 		http.SetCookie(w, &cookieId)
+		http.SetCookie(w, &cookieRole)
 		http.SetCookie(w, &cookieQq)
 		http.SetCookie(w, &cookieToken)
 		sendUserResponse(w, res, 201, "登陆成功啦！")
