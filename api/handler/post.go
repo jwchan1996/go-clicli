@@ -14,8 +14,6 @@ import (
 
 func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
-	token := r.Header.Get("Token")
-	token = util.ResolveToken(token)
 	pbody := &def.Post{}
 
 	if err := json.Unmarshal(req, pbody); err != nil {
@@ -24,7 +22,11 @@ func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type, pbody.Uid)
-	if i := UserIsLogin(resp.Uid, token); i != 1 {
+	token := r.Header.Get("Token")
+	token = util.ResolveToken(token)
+	uname, err := r.Cookie("uname")
+	uqq, err := r.Cookie("uqq")
+	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
@@ -41,7 +43,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid := p.ByName("id")
 	pint, _ := strconv.Atoi(pid)
-
 	req, _ := ioutil.ReadAll(r.Body)
 	pbody := &def.Post{}
 
@@ -50,7 +51,16 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type); err != nil {
+	resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type)
+	token := r.Header.Get("Token")
+	token = util.ResolveToken(token)
+	uname, err := r.Cookie("uname")
+	uqq, err := r.Cookie("uqq")
+	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
+	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
@@ -66,9 +76,17 @@ func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
-	} else {
-		sendErrorResponse(w, def.Success)
 	}
+	token := r.Header.Get("Token")
+	token = util.ResolveToken(token)
+	uname, err := r.Cookie("uname")
+	uqq, err := r.Cookie("uqq")
+	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
+	sendErrorResponse(w, def.Success)
+
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

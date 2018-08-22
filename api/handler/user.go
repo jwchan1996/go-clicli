@@ -32,7 +32,6 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		sendErrorResponse(w, def.Success)
 	}
-
 }
 
 func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -53,7 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		token := util.CreateToken(resp.Id)
+		token := util.CreateToken(resp.Name, string(resp.Id))
 		cookieId := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
 		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
@@ -85,7 +84,16 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
+	resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc)
+	token := r.Header.Get("Token")
+	token = util.ResolveToken(token)
+	uname, err := r.Cookie("uname")
+	uqq, err := r.Cookie("uqq")
+	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
+	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
@@ -101,9 +109,17 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
-	} else {
-		sendErrorResponse(w, def.Success)
 	}
+	token := r.Header.Get("Token")
+	token = util.ResolveToken(token)
+	uname, err := r.Cookie("uname")
+	uqq, err := r.Cookie("uqq")
+	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
+	sendErrorResponse(w, def.Success)
+
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

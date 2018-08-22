@@ -18,8 +18,8 @@ func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 }
 
-func UserIsLogin(uid int, token string) int {
-	t := util.CreateToken(uid)
+func UserIsLogin(uname string, uqq string, token string) int {
+	t := util.CreateToken(uname, uqq)
 	res := util.ResolveToken(t)
 	if token == res {
 		return 1
