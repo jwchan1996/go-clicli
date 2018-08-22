@@ -42,7 +42,7 @@ func UpdatePost(id int, title string, content string, status string, sort string
 	}
 	defer stmtIns.Close()
 
-	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid}
+	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime}
 	defer stmtIns.Close()
 	return res, err
 }

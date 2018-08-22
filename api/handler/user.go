@@ -52,7 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		token := util.CreateToken(resp.Name, string(resp.Id))
+		token := util.CreateToken(resp.Id)
 		cookieId := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
 		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
@@ -85,11 +85,10 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc)
-	token := r.Header.Get("Token")
-	token = util.ResolveToken(token)
-	uname, err := r.Cookie("uname")
+	token := util.ResolveToken(r.Header.Get("Token"))
 	uqq, err := r.Cookie("uqq")
-	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+	qq, _ := strconv.Atoi(uqq.Name)
+	if i := UserIsLogin(qq, token); i != 1 {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
@@ -110,11 +109,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	}
-	token := r.Header.Get("Token")
-	token = util.ResolveToken(token)
-	uname, err := r.Cookie("uname")
+	token := util.ResolveToken(r.Header.Get("Token"))
 	uqq, err := r.Cookie("uqq")
-	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+	qq, _ := strconv.Atoi(uqq.Name)
+	if i := UserIsLogin(qq, token); i != 1 {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}

@@ -4,8 +4,8 @@ import (
 	"encoding/base64"
 )
 
-func CreateToken(uname string, uqq string) string {
-	newId := Cipher(uname + uqq)
+func CreateToken(uqq int) string {
+	newId := Cipher(string(uqq))
 	token := base64.StdEncoding.EncodeToString([]byte(newId))
 	return token
 }

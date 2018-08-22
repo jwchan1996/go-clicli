@@ -22,11 +22,10 @@ func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type, pbody.Uid)
-	token := r.Header.Get("Token")
-	token = util.ResolveToken(token)
-	uname, err := r.Cookie("uname")
+	token := util.ResolveToken(r.Header.Get("Token"))
 	uqq, err := r.Cookie("uqq")
-	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+	qq, _ := strconv.Atoi(uqq.Name)
+	if i := UserIsLogin(qq, token); i != 1 {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
@@ -52,11 +51,10 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type)
-	token := r.Header.Get("Token")
-	token = util.ResolveToken(token)
-	uname, err := r.Cookie("uname")
+	token := util.ResolveToken(r.Header.Get("Token"))
 	uqq, err := r.Cookie("uqq")
-	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+	qq, _ := strconv.Atoi(uqq.Name)
+	if i := UserIsLogin(qq, token); i != 1 {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
@@ -77,11 +75,10 @@ func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	}
-	token := r.Header.Get("Token")
-	token = util.ResolveToken(token)
-	uname, err := r.Cookie("uname")
+	token := util.ResolveToken(r.Header.Get("Token"))
 	uqq, err := r.Cookie("uqq")
-	if i := UserIsLogin(uname.Name, uqq.Name, token); i != 1 {
+	qq, _ := strconv.Atoi(uqq.Name)
+	if i := UserIsLogin(qq, token); i != 1 {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
