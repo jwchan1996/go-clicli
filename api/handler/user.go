@@ -21,7 +21,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if res, _ := db.GetUser(ubody.Name,0); res != nil {
+	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
 		sendErrorResponse(w, def.ErrorUserNameRepeated)
 		return
 	}
@@ -44,7 +44,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	resp, err := db.GetUser(ubody.Name,0)
+	resp, err := db.GetUser(ubody.Name, 0)
 	pwd := util.Cipher(ubody.Pwd)
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
@@ -53,10 +53,13 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
+		token := util.CreateToken(resp.Id)
 		cookieId := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
+		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
 		http.SetCookie(w, &cookieId)
 		http.SetCookie(w, &cookieQq)
+		http.SetCookie(w, &cookieToken)
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
 

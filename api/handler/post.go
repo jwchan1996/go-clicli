@@ -9,10 +9,13 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
 	"log"
+	"github.com/132yse/acgzone-server/api/util"
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
+	token := r.Header.Get("Token")
+	token = util.ResolveToken(token)
 	pbody := &def.Post{}
 
 	if err := json.Unmarshal(req, pbody); err != nil {
@@ -20,7 +23,12 @@ func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type, pbody.Uid); err != nil {
+	resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type, pbody.Uid)
+	if i := UserIsLogin(resp.Uid, token); i != 1 {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
+	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {

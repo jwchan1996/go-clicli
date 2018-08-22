@@ -20,7 +20,7 @@ type Post struct {
 	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`
-	Count   *Count  `json:"count,omitempty"`
+	Count   *Count `json:"count,omitempty"`
 }
 
 type Comment struct {
@@ -43,4 +43,9 @@ type Users struct {
 
 type Comments struct {
 	Posts []*Comment `json:"comments"`
+}
+
+type Token struct {
+	Name string
+	Pwd  string
 }
