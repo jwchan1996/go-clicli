@@ -9,7 +9,6 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
 	"log"
-	"github.com/132yse/acgzone-server/api/util"
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -22,13 +21,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	resp, err := db.AddPost(pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type, pbody.Uid)
-	token := util.ResolveToken(r.Header.Get("Token"))
-	uqq, err := r.Cookie("uqq")
-	qq, _ := strconv.Atoi(uqq.Name)
-	if i := UserIsLogin(qq, token); i != 1 {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
@@ -50,15 +42,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type)
-	token := util.ResolveToken(r.Header.Get("Token"))
-	uqq, err := r.Cookie("uqq")
-	qq, _ := strconv.Atoi(uqq.Name)
-	if i := UserIsLogin(qq, token); i != 1 {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
-	if err != nil {
+	if resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Type); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
@@ -74,16 +58,9 @@ func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
+	} else {
+		sendErrorResponse(w, def.Success)
 	}
-	token := util.ResolveToken(r.Header.Get("Token"))
-	uqq, err := r.Cookie("uqq")
-	qq, _ := strconv.Atoi(uqq.Name)
-	if i := UserIsLogin(qq, token); i != 1 {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
-	sendErrorResponse(w, def.Success)
-
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

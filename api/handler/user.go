@@ -32,6 +32,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		sendErrorResponse(w, def.Success)
 	}
+
 }
 
 func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -84,15 +85,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc)
-	token := util.ResolveToken(r.Header.Get("Token"))
-	uqq, err := r.Cookie("uqq")
-	qq, _ := strconv.Atoi(uqq.Name)
-	if i := UserIsLogin(qq, token); i != 1 {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
-	if err != nil {
+	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
@@ -108,16 +101,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
+	} else {
+		sendErrorResponse(w, def.Success)
 	}
-	token := util.ResolveToken(r.Header.Get("Token"))
-	uqq, err := r.Cookie("uqq")
-	qq, _ := strconv.Atoi(uqq.Name)
-	if i := UserIsLogin(qq, token); i != 1 {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
-	sendErrorResponse(w, def.Success)
-
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
