@@ -12,13 +12,13 @@ func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 	io.WriteString(w, string(resStr))
 }
 
-func sendUserResponse(w http.ResponseWriter, uRes def.UserCredential, sc int, msg string) {
+func sendUserResponse(w http.ResponseWriter, uRes *def.UserCredential, sc int, msg string) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
 		Code int                `json:"code"`
 		Msg  string             `json:"msg,omitempty"`
 		User def.UserCredential `json:"user"`
-	}{sc, msg, uRes})
+	}{sc, msg, *uRes})
 
 	io.WriteString(w, string(resStr))
 

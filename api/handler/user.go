@@ -51,19 +51,15 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	} else {
-		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		token := util.CreateToken(resp.QQ)
+		token := util.CreateToken(uanme)
 		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
-		cookieId := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: "chinko.cc", HttpOnly: true}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
-		cookieRole := http.Cookie{Name: "role", Value: resp.Role, Path: "/", Domain: "chinko.cc", HttpOnly: true}
 		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
 		http.SetCookie(w, &cookieName)
-		http.SetCookie(w, &cookieId)
-		http.SetCookie(w, &cookieRole)
 		http.SetCookie(w, &cookieQq)
 		http.SetCookie(w, &cookieToken)
+		res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
 
@@ -93,7 +89,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+		res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "更新成功啦")
 	}
 
@@ -117,10 +113,10 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
-	} else {
-		res := def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, res, 201, "")
 	}
+	res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+	sendUserResponse(w, res, 201, "")
+
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {

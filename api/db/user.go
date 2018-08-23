@@ -59,7 +59,6 @@ func UpdateUser(id int, name string, pwd string, role string, qq int, sign strin
 func GetUser(name string, id int) (*def.UserCredential, error) {
 	stmtOut, err := dbConn.Prepare("SELECT id,name,pwd,role,qq,sign FROM users WHERE name = ? OR id = ?")
 	if err != nil {
-		log.Printf("%s", err)
 		return nil, err
 	}
 
