@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"log"
 )
 
 func AddVideo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -45,10 +46,12 @@ func GetVideos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 	vid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetVideo(vid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
+		log.Printf("%s", err)
 		return
 	} else {
 		res := def.Video{Id: resp.Id, Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Ptitle: resp.Ptitle, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}

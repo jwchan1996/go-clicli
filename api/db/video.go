@@ -44,7 +44,7 @@ WHERE videos.pid=? OR videos.uid =? ORDER BY oid limit ?,?`)
 	for rows.Next() {
 		var id, oid, pid, uid int
 		var title, content, ctime, uname, uqq string
-		if err := rows.Scan(&id, *&oid, &title, &content, &ctime, &pid, &uid, &uname, &uqq); err != nil {
+		if err := rows.Scan(&id, &oid, &title, &content, &ctime, &pid, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
 
@@ -58,8 +58,8 @@ WHERE videos.pid=? OR videos.uid =? ORDER BY oid limit ?,?`)
 }
 
 func GetVideo(id int) (*def.Video, error) {
-	stmtOut, err := dbConn.Prepare(`SELECT videos.id,videos.oid,videos.title,videos.content,videos.time,posts.id,posts.title,users.id,users.name,users.qq FROM (videos INNER JOIN posts ON videos.pid=posts.pid) 
-INNER JOIN users ON video.uid = users.id WHERE videos.id = ?`)
+	stmtOut, err := dbConn.Prepare(`SELECT videos.id,videos.oid,videos.title,videos.content,videos.time,posts.id,posts.title,users.id,users.name,users.qq FROM (videos INNER JOIN posts ON videos.pid=posts.id) 
+INNER JOIN users ON videos.uid = users.id WHERE videos.id = ?`)
 	if err != nil {
 		return nil, err
 	}
