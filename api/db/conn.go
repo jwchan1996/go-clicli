@@ -13,7 +13,7 @@ var (
 func init() {
 //root:changhao123@tcp(localhost:3306)/acgzone?charset=utf8
 //root:root@tcp(localhost:3306)/acgzone?charset=utf8
-	dbConn, err = sql.Open("mysql", "root:root@tcp(localhost:3306)/acgzone?charset=utf8")
+	dbConn, err = sql.Open("mysql", "root:changhao123@tcp(localhost:3306)/acgzone?charset=utf8")
 	if err != nil {
 		panic(err.Error())
 	}
