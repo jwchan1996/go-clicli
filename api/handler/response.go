@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"io"
-	"net/http"
 	"encoding/json"
 	"github.com/132yse/acgzone-server/api/def"
+	"io"
+	"net/http"
 )
 
 func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
@@ -64,6 +64,16 @@ func sendCommentResponse(w http.ResponseWriter, cRes def.Comment, sc int) {
 	io.WriteString(w, string(resStr))
 }
 
+func sendVideoResponse(w http.ResponseWriter, Res def.Video, sc int) {
+	w.WriteHeader(sc)
+	resStr, _ := json.Marshal(struct {
+		Code   int       `json:"code"`
+		Result def.Video `json:"result"`
+	}{sc, Res})
+
+	io.WriteString(w, string(resStr))
+}
+
 func sendCommentsResponse(w http.ResponseWriter, pRes *def.Comments, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
@@ -73,6 +83,17 @@ func sendCommentsResponse(w http.ResponseWriter, pRes *def.Comments, sc int) {
 
 	io.WriteString(w, string(resStr))
 }
+
+func sendVideosResponse(w http.ResponseWriter, Res *def.Videos, sc int) {
+	w.WriteHeader(sc)
+	resStr, _ := json.Marshal(struct {
+		Code int `json:"code"`
+		*def.Videos
+	}{sc, Res})
+
+	io.WriteString(w, string(resStr))
+}
+
 
 func sendCountResponse(w http.ResponseWriter, cRes def.Count, sc int) {
 	w.WriteHeader(sc)

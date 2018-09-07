@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
-	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/handler"
+	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 func RegisterHandler() *httprouter.Router {
@@ -18,10 +18,13 @@ func RegisterHandler() *httprouter.Router {
 	router.POST("/post/update/:id", handler.UpdatePost)
 	router.POST("/comment/add", handler.AddComment)
 	router.POST("/comment/delete/:id", handler.DeleteComment)
+	router.POST("/video/add", handler.AddVideo)
+	router.POST("/video/delete/:id", handler.DeleteVideo)
 	router.POST("/logout", handler.Logout)
 	router.GET("/user", handler.GetUser)
 	router.GET("/post/:id", handler.GetPost)
 	router.GET("/comments", handler.GetComments)
+	router.GET("/videos", handler.GetVideos)
 	router.GET("/posts/type", handler.GetPostsOneOf)
 	router.GET("/posts/both", handler.GetPostsBoth)
 	router.GET("/users", handler.GetUsers)
