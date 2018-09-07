@@ -33,6 +33,19 @@ type Comment struct {
 	Uqq     string `json:"uqq,omitempty"`
 }
 
+type Video struct {
+	Id     int    `json:"id"`
+	Oid    int    `json:"oid"`
+	Content    string `json:"url"`
+	Time   string `json:"time"`
+	Title  string `json:"title"`
+	Pid    int    `json:"pid"`
+	Ptitle string `json:"ptitle"`
+	Uid    int    `json:"uid"`
+	Uname  string `json:"uname"`
+	Uqq    string `json:"uqq"`
+}
+
 type Posts struct {
 	Posts []*Post `json:"posts"`
 }
@@ -43,6 +56,10 @@ type Users struct {
 
 type Comments struct {
 	Posts []*Comment `json:"comments"`
+}
+
+type Videos struct {
+	Videos []*Video `json:"videos"`
 }
 
 type Token struct {
