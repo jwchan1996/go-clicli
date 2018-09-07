@@ -23,7 +23,7 @@ func AddVideo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Video{Id: resp.Id, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Uid: resp.Uid}
+		res := def.Video{Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Uid: resp.Uid}
 		sendVideoResponse(w, res, 201)
 	}
 
@@ -34,13 +34,25 @@ func GetVideos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	resp, err := db.GetVideos(pid,uid, page, pageSize)
+	resp, err := db.GetVideos(pid, uid, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
 		res := &def.Videos{Videos: resp}
 		sendVideosResponse(w, res, 201)
+	}
+}
+
+func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	vid, _ := strconv.Atoi(p.ByName("id"))
+	resp, err := db.GetVideo(vid)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		res := def.Video{Id: resp.Id, Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Ptitle: resp.Ptitle, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
+		sendVideoResponse(w, res, 201)
 	}
 }
 

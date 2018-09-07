@@ -9,7 +9,7 @@ import (
 func AddVideo(oid int, title string, content string, pid int, uid int) (*def.Video, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("INSERT INTO comments (oid,title,content,time,pid,uid) VALUES (?,?,?,?,?,?)")
+	stmtIns, err := dbConn.Prepare("INSERT INTO videos (oid,title,content,time,pid,uid) VALUES (?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
 	}

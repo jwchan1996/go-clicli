@@ -34,16 +34,16 @@ type Comment struct {
 }
 
 type Video struct {
-	Id     int    `json:"id"`
-	Oid    int    `json:"oid"`
-	Content    string `json:"url"`
-	Time   string `json:"time"`
-	Title  string `json:"title"`
-	Pid    int    `json:"pid"`
-	Ptitle string `json:"ptitle"`
-	Uid    int    `json:"uid"`
-	Uname  string `json:"uname"`
-	Uqq    string `json:"uqq"`
+	Id      int    `json:"id,omitempty"`
+	Oid     int    `json:"oid"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Time    string `json:"time"`
+	Pid     int    `json:"pid"`
+	Ptitle  string `json:"ptitle,omitempty"`
+	Uid     int    `json:"uid"`
+	Uname   string `json:"uname,omitempty"`
+	Uqq     string `json:"uqq,omitempty"`
 }
 
 type Posts struct {
