@@ -53,9 +53,9 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
 		token := util.CreateToken(uanme)
-		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "chinko.cc"}
-		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "chinko.cc"}
-		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "chinko.cc"}
+		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "clicli.us"}
+		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "clicli.us"}
+		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "clicli.us"}
 		http.SetCookie(w, &cookieName)
 		http.SetCookie(w, &cookieQq)
 		http.SetCookie(w, &cookieToken)
@@ -66,8 +66,8 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: "chinko.cc", MaxAge: -1}
-	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "chinko.cc", MaxAge: -1}
+	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: "clicli.us", MaxAge: -1}
+	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "clicli.us", MaxAge: -1}
 	http.SetCookie(w, &cookieId)
 	http.SetCookie(w, &cookieQq)
 	sendErrorResponse(w, def.Success)
