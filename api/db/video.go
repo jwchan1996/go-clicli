@@ -80,21 +80,21 @@ INNER JOIN users ON videos.uid = users.id WHERE videos.id = ?`)
 	return res, nil
 }
 
-func UpdateVideo(id int, oid int, title string, content string, uid int) (*def.Video, error) {
+func UpdateVideo(id int, oid int, title string, content string, pid int, uid int) (*def.Video, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("UPDATE videos SET oid=?,title=?,content=?,uid=?,time=? WHERE id =?")
+	stmtIns, err := dbConn.Prepare("UPDATE videos SET oid=?,title=?,content=?,pid=?,uid=?,time=? WHERE id =?")
 	if err != nil {
 		return nil, err
 
 	}
-	_, err = stmtIns.Exec(&oid, &title, &content, &uid, &ctime, &id)
+	_, err = stmtIns.Exec(&oid, &title, &content, &pid, &uid, &ctime, &id)
 	if err != nil {
 		return nil, err
 	}
 	defer stmtIns.Close()
 
-	res := &def.Video{Id: id, Oid: oid, Title: title, Content: content, Uid: uid, Time: ctime}
+	res := &def.Video{Id: id, Oid: oid, Title: title, Content: content, Pid: pid, Uid: uid, Time: ctime}
 	defer stmtIns.Close()
 	return res, err
 }
