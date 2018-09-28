@@ -80,9 +80,10 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func DeleteVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pid, _ := strconv.Atoi(p.ByName("id"))
-	err := db.DeleteComment(pid)
+func DeleteVideo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
+	err := db.DeleteVideo(id, pid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return

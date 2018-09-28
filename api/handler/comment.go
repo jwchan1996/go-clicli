@@ -1,20 +1,19 @@
 package handler
 
 import (
-	"net/http"
-	"github.com/julienschmidt/httprouter"
-	"io/ioutil"
-	"github.com/132yse/acgzone-server/api/def"
 	"encoding/json"
 	"github.com/132yse/acgzone-server/api/db"
+	"github.com/132yse/acgzone-server/api/def"
+	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"strconv"
 )
 
 func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
 	cbody := &def.Comment{}
-
 
 	if err := json.Unmarshal(req, cbody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -37,7 +36,7 @@ func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	resp, err := db.GetComments(pid,uid, page, pageSize)
+	resp, err := db.GetComments(pid, uid, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)
@@ -48,9 +47,10 @@ func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
-func DeleteComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	pid, _ := strconv.Atoi(p.ByName("id"))
-	err := db.DeleteComment(pid)
+func DeleteComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
+	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
+	err := db.DeleteComment(id, pid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return

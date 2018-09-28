@@ -99,13 +99,13 @@ func UpdateVideo(id int, oid int, title string, content string, pid int, uid int
 	return res, err
 }
 
-func DeleteVideo(id int) error {
-	stmtDel, err := dbConn.Prepare("DELETE FROM videos WHERE id=?")
+func DeleteVideo(id int, pid int) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM videos WHERE id=? OR pid=?")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmtDel.Exec(id)
+	_, err = stmtDel.Exec(id, pid)
 	if err != nil {
 		return err
 	}

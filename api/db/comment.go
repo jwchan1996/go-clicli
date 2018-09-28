@@ -2,8 +2,8 @@ package db
 
 import (
 	"github.com/132yse/acgzone-server/api/def"
-	"time"
 	"log"
+	"time"
 )
 
 func AddComment(content string, pid int, uid int) (*def.Comment, error) {
@@ -60,13 +60,13 @@ WHERE comments.pid=? OR comments.uid =? ORDER BY time DESC limit ?,?`)
 
 }
 
-func DeleteComment(id int) error {
-	stmtDel, err := dbConn.Prepare("DELETE FROM comments WHERE id=?")
+func DeleteComment(id int, pid int) error {
+	stmtDel, err := dbConn.Prepare("DELETE FROM comments WHERE id=? OR pid=?")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmtDel.Exec(id)
+	_, err = stmtDel.Exec(id, pid)
 	if err != nil {
 		return err
 	}
