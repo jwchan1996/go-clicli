@@ -6,7 +6,6 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -72,7 +71,6 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	resp, err := db.GetVideo(vid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
-		log.Printf("%s", err)
 		return
 	} else {
 		res := def.Video{Id: resp.Id, Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Ptitle: resp.Ptitle, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
@@ -83,6 +81,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 func DeleteVideo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
+
 	err := db.DeleteVideo(id, pid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
