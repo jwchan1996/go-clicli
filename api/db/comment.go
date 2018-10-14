@@ -28,7 +28,7 @@ func GetComments(pid int, uid int, vid int, page int, pageSize int) ([]*def.Comm
 	start := pageSize * (page - 1)
 
 	stmtOut, err := dbConn.Prepare(`SELECT comments.id,comments.content,comments.ctime,comments.pid,comments.vid,comments.tuid,comments.time,users.id,users.name,users.qq FROM comments INNER JOIN users ON comments.uid = users.id 
-WHERE comments.uid =? OR comments.vid =? OR comments.pid=? ORDER BY time DESC limit ?,?`)
+WHERE comments.pid=? OR comments.uid =? OR comments.vid =? ORDER BY time DESC limit ?,?`)
 
 	if err != nil {
 		log.Printf("%s", err)
