@@ -20,7 +20,7 @@ func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.AddComment(cbody.Content, cbody.Pid, cbody.Uid); err != nil {
+	if resp, err := db.AddComment(cbody.Content, cbody.Pid, cbody.Uid, cbody.Tuid, cbody.Vid, cbody.Time); err != nil {
 		log.Printf("%s", err)
 		sendErrorResponse(w, def.ErrorDB)
 		return
@@ -34,15 +34,16 @@ func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
+	vid, _ := strconv.Atoi(r.URL.Query().Get("vid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	resp, err := db.GetComments(pid, uid, page, pageSize)
+	resp, err := db.GetComments(pid, uid, vid, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		log.Printf("%s", err)
 		return
 	} else {
-		res := &def.Comments{Posts: resp}
+		res := &def.Comments{Comments: resp}
 		sendCommentsResponse(w, res, 201)
 	}
 }

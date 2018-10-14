@@ -26,8 +26,11 @@ type Post struct {
 type Comment struct {
 	Id      int    `json:"id,omitempty"`
 	Content string `json:"content"`
-	Time    string `json:"time"`
+	Ctime   string `json:"ctime"`
 	Pid     int    `json:"pid"`
+	Vid     int    `json:"vid,omitempty"`
+	Tuid    int    `json:"tuid,omitempty"`
+	Time    int `json:"time,omitempty"`
 	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`
@@ -55,7 +58,7 @@ type Users struct {
 }
 
 type Comments struct {
-	Posts []*Comment `json:"comments"`
+	Comments []*Comment `json:"comments"`
 }
 
 type Videos struct {
