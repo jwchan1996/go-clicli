@@ -85,6 +85,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
+	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
+		sendErrorResponse(w, def.ErrorUserNameRepeated)
+		return
+	}
+
 	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
