@@ -30,7 +30,8 @@ type Comment struct {
 	Pid     int    `json:"pid"`
 	Vid     int    `json:"vid,omitempty"`
 	Tuid    int    `json:"tuid,omitempty"`
-	Time    int `json:"time,omitempty"`
+	Time    int    `json:"time"`
+	Color   string `json:"color"`
 	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`

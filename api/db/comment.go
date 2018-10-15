@@ -6,20 +6,20 @@ import (
 	"time"
 )
 
-func AddComment(content string, pid int, uid int, tuid int, vid int, dtime int) (*def.Comment, error) {
+func AddComment(content string, pid int, uid int, tuid int, vid int, dtime int, color string) (*def.Comment, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("INSERT INTO comments (content,ctime,pid,uid,tuid,vid,time) VALUES (?,?,?,?,?,?,?)")
+	stmtIns, err := dbConn.Prepare("INSERT INTO comments (content,ctime,pid,uid,tuid,vid,time,color) VALUES (?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
 	}
-	_, err = stmtIns.Exec(content, ctime, pid, uid, tuid, vid, dtime)
+	_, err = stmtIns.Exec(content, ctime, pid, uid, tuid, vid, dtime, color)
 	if err != nil {
 		return nil, err
 	}
 	defer stmtIns.Close()
 
-	res := &def.Comment{Content: content, Ctime: ctime, Uid: uid, Pid: pid, Tuid: tuid, Vid: vid, Time: dtime}
+	res := &def.Comment{Content: content, Ctime: ctime, Uid: uid, Pid: pid, Tuid: tuid, Vid: vid, Time: dtime, Color: color}
 	defer stmtIns.Close()
 	return res, err
 }
@@ -27,8 +27,8 @@ func AddComment(content string, pid int, uid int, tuid int, vid int, dtime int) 
 func GetComments(pid int, uid int, vid int, page int, pageSize int) ([]*def.Comment, error) {
 	start := pageSize * (page - 1)
 
-	stmtOut, err := dbConn.Prepare(`SELECT comments.id,comments.content,comments.ctime,comments.pid,comments.vid,comments.tuid,comments.time,users.id,users.name,users.qq FROM comments INNER JOIN users ON comments.uid = users.id 
-WHERE comments.pid=? OR comments.uid =? OR comments.vid =? ORDER BY time DESC limit ?,?`)
+	stmtOut, err := dbConn.Prepare(`SELECT comments.id,comments.content,comments.ctime,comments.pid,comments.vid,comments.tuid,comments.time,comments.color,users.id,users.name,users.qq FROM comments INNER JOIN users ON comments.uid = users.id 
+WHERE comments.pid=? OR comments.uid =? OR comments.vid =? ORDER BY ctime DESC limit ?,?`)
 
 	if err != nil {
 		log.Printf("%s", err)
@@ -45,13 +45,13 @@ WHERE comments.pid=? OR comments.uid =? OR comments.vid =? ORDER BY time DESC li
 
 	for rows.Next() {
 		var id, pid, uid, vid, tuid, dtime int
-		var content, ctime, uname, uqq string
-		if err := rows.Scan(&id, &content, &ctime, &pid, &vid, &tuid, &dtime, &uid, &uname, &uqq); err != nil {
+		var content, ctime, uname, uqq, color string
+		if err := rows.Scan(&id, &content, &ctime, &pid, &vid, &tuid, &dtime, &color, &uid, &uname, &uqq); err != nil {
 			log.Printf("%s", err)
 			return res, err
 		}
 
-		c := &def.Comment{Id: id, Content: content, Ctime: ctime, Pid: pid, Vid: vid, Tuid: tuid, Time: dtime, Uid: uid, Uname: uname, Uqq: uqq}
+		c := &def.Comment{Id: id, Content: content, Ctime: ctime, Pid: pid, Vid: vid, Tuid: tuid, Time: dtime, Color: color, Uid: uid, Uname: uname, Uqq: uqq}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()
