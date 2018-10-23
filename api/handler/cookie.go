@@ -6,9 +6,9 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
-	"log"
 )
 
 func ReplaceCookie(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -37,6 +37,10 @@ func GetCookie(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if err != nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		log.Printf("%v", err)
+		return
+	}
+	if resp == nil{
+		sendErrorResponse(w, def.ErrorDB)
 		return
 	}
 	res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy, Tyyp: resp.Tyyp, Bit: resp.Bit}
