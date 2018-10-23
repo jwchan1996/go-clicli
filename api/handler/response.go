@@ -104,3 +104,13 @@ func sendCountResponse(w http.ResponseWriter, cRes def.Count, sc int) {
 
 	io.WriteString(w, string(resStr))
 }
+
+func sendCookieResponse(w http.ResponseWriter, cRes def.Cookie, sc int) {
+	w.WriteHeader(sc)
+	resStr, _ := json.Marshal(struct {
+		Code   int         `json:"code"`
+		Result def.Cookie `json:"result"`
+	}{sc, cRes})
+
+	io.WriteString(w, string(resStr))
+}

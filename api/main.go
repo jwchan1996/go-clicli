@@ -34,6 +34,8 @@ func RegisterHandler() *httprouter.Router {
 	router.GET("/search/users", handler.SearchUsers)
 	router.GET("/auth", handler.Auth)
 	router.GET("/count/:pid", handler.GetCount)
+	router.POST("/cookie/replace", handler.ReplaceCookie)
+	router.GET("/cookie/:uid", handler.GetCookie)
 
 	return router
 }
