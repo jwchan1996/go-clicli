@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"net/http"
-	"io/ioutil"
-	"encoding/json"
-	"github.com/julienschmidt/httprouter"
-	"github.com/132yse/acgzone-server/api/def"
-	"github.com/132yse/acgzone-server/api/db"
-	"strconv"
-	"github.com/132yse/acgzone-server/api/util"
 	"encoding/base64"
+	"encoding/json"
+	"github.com/132yse/acgzone-server/api/db"
+	"github.com/132yse/acgzone-server/api/def"
+	"github.com/132yse/acgzone-server/api/util"
+	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
+	"net/http"
+	"strconv"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -53,11 +53,13 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
 		token := util.CreateToken(uanme)
-		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "clicli.us"}
-		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "clicli.us"}
-		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "clicli.us"}
+		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "clicli.top"}
+		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "clicli.top"}
+		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: "clicli.top"}
+		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "clicli.top"}
 		http.SetCookie(w, &cookieName)
 		http.SetCookie(w, &cookieQq)
+		http.SetCookie(w, &cookieUid)
 		http.SetCookie(w, &cookieToken)
 		res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "登陆成功啦！")
@@ -66,8 +68,8 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: "clicli.us", MaxAge: -1}
-	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "clicli.us", MaxAge: -1}
+	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: "clicli.top", MaxAge: -1}
+	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "clicli.top", MaxAge: -1}
 	http.SetCookie(w, &cookieId)
 	http.SetCookie(w, &cookieQq)
 	sendErrorResponse(w, def.Success)
@@ -85,17 +87,18 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
+	res, _ := db.GetUser("", pint)
+	if res.Name == ubody.Name {
+		if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
+			sendErrorResponse(w, def.ErrorDB)
+			return
+		} else {
+			res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+			sendUserResponse(w, res, 201, "更新成功啦")
+		}
+	} else if res != nil {
 		sendErrorResponse(w, def.ErrorUserNameRepeated)
 		return
-	}
-
-	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
-		sendErrorResponse(w, def.ErrorDB)
-		return
-	} else {
-		res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, res, 201, "更新成功啦")
 	}
 
 }
