@@ -88,15 +88,15 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	res, _ := db.GetUser("", pint)
-	if res.Name == ubody.Name {
+	if res.Name != ubody.Name || res.Id == pint {
 		if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
 			sendErrorResponse(w, def.ErrorDB)
 			return
 		} else {
-			res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-			sendUserResponse(w, res, 201, "更新成功啦")
+			ret := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+			sendUserResponse(w, ret, 201, "更新成功啦")
 		}
-	} else if res != nil {
+	} else {
 		sendErrorResponse(w, def.ErrorUserNameRepeated)
 		return
 	}
