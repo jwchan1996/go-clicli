@@ -5,8 +5,8 @@ import (
 	"log"
 )
 
-func CreateToken(uname string) string {
-	newId := Cipher(uname+"acgzone2333@132SAMA")
+func CreateToken(uname string, role string) string {
+	newId := Cipher(uname + role + "acgzone2333@132SAMA")
 	token := base64.StdEncoding.EncodeToString([]byte(newId))
 	return token
 }

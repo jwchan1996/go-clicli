@@ -1,17 +1,17 @@
 package handler
 
 import (
-	"strconv"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
-	"github.com/julienschmidt/httprouter"
-	"github.com/132yse/acgzone-server/api/def"
 	"github.com/132yse/acgzone-server/api/db"
+	"github.com/132yse/acgzone-server/api/def"
+	"github.com/julienschmidt/httprouter"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"strconv"
 )
 
-func AddPost(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
 	pbody := &def.Post{}
 

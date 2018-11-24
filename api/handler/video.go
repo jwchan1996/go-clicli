@@ -10,7 +10,8 @@ import (
 	"strconv"
 )
 
-func AddVideo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 	req, _ := ioutil.ReadAll(r.Body)
 	body := &def.Video{}
 
@@ -78,7 +79,8 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
-func DeleteVideo(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func DeleteVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 

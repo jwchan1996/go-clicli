@@ -11,7 +11,8 @@ import (
 	"strconv"
 )
 
-func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func AddComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 	req, _ := ioutil.ReadAll(r.Body)
 	cbody := &def.Comment{}
 
@@ -20,7 +21,7 @@ func AddComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.AddComment(cbody.Content, cbody.Pid, cbody.Uid, cbody.Tuid, cbody.Vid, cbody.Time,cbody.Color); err != nil {
+	if resp, err := db.AddComment(cbody.Content, cbody.Pid, cbody.Uid, cbody.Tuid, cbody.Vid, cbody.Time, cbody.Color); err != nil {
 		log.Printf("%s", err)
 		sendErrorResponse(w, def.ErrorDB)
 		return
@@ -48,7 +49,7 @@ func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
-func DeleteComment(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func DeleteComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	err := db.DeleteComment(id, pid)

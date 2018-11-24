@@ -8,6 +8,7 @@ import (
 	"github.com/132yse/acgzone-server/api/util"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -52,7 +53,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	} else {
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		token := util.CreateToken(uanme)
+		token := util.CreateToken(uanme, resp.Role)
 		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "clicli.top"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "clicli.top"}
 		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: "clicli.top"}
@@ -76,6 +77,12 @@ func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	err := userAuth(w, r, p)
+	if err != nil {
+		log.Printf("%s", err)
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
 	pid := p.ByName("id")
 	pint, _ := strconv.Atoi(pid)
 
@@ -104,6 +111,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
 	uid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeleteUser(uid)
 	if err != nil {
