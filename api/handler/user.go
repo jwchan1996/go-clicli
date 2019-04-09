@@ -10,7 +10,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 )
+
+const DOMAIN = `clicli.us`
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
@@ -54,10 +57,10 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
 		token := util.CreateToken(uanme, resp.Role)
 
-		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "clicli.top"}
-		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "clicli.top"}
-		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: "clicli.top"}
-		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: "clicli.top"}
+		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: DOMAIN}
+		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: DOMAIN, MaxAge: int(time.Hour * 24 / time.Second)}
+		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: DOMAIN}
+		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: DOMAIN, HttpOnly: true}
 		http.SetCookie(w, &cookieName)
 		http.SetCookie(w, &cookieQq)
 		http.SetCookie(w, &cookieUid)
@@ -70,8 +73,8 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: "clicli.top", MaxAge: -1}
-	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: "clicli.top", MaxAge: -1}
+	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: DOMAIN, MaxAge: -1}
+	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: DOMAIN, MaxAge: -1}
 	http.SetCookie(w, &cookieId)
 	http.SetCookie(w, &cookieQq)
 	sendErrorResponse(w, def.Success)
