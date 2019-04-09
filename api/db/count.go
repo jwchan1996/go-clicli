@@ -5,26 +5,7 @@ import (
 	"database/sql"
 )
 
-//func AddPageView(pid int) error {
-//
-//	stmtIns, err := dbConn.Prepare("INSERT INTO pv (pid,pv) VALUES (?,?)")
-//
-//	stmtUp, err := dbConn.Prepare("UPDATE pv SET pv=pv+1 WHERE pid =?")
-//	if err != nil {
-//		return err
-//	}
-//	_, err = stmtIns.Exec(content, ctime, pid, uid)
-//	_, err = stmtUp.Exec(&pid)
-//	if err != nil {
-//		return err
-//	}
-//	defer stmtIns.Close()
-//	defer stmtUp.Close()
-//	return nil
-//}
-
-func GetCount(pid int) (*def.Count, error) {
-	//stmtOut, err := dbConn.Prepare("SELECT pid,pv FROM pv WHERE pid = ?")
+func GetCommentCount(pid int) (*def.Count, error) {
 	stmtCount, err := dbConn.Prepare("SELECT COUNT(*) FROM comments WHERE pid = ?")
 	if err != nil {
 		return nil, err

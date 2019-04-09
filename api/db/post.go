@@ -4,7 +4,8 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 	"time"
 	"database/sql"
-	"log"
+	"fmt"
+	"strings"
 )
 
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
@@ -22,7 +23,7 @@ func AddPost(title string, content string, status string, sort string, tag strin
 	}
 	defer stmtIns.Close()
 
-	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid}
+	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid}
 	defer stmtIns.Close()
 
 	return res, err
@@ -42,7 +43,7 @@ func UpdatePost(id int, title string, content string, status string, sort string
 	}
 	defer stmtIns.Close()
 
-	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime}
+	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime}
 	defer stmtIns.Close()
 	return res, err
 }
@@ -81,77 +82,63 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	}
 	defer stmtOut.Close()
 
-	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
+	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
 
 	return res, nil
 }
 
-func GetPostsOneOf(status string, sort string, tag string, uid int, page int, pageSize int) ([]*def.Post, error) {
+func GetPosts(page int, pageSize int, status string, sort string, tag string, uid int) ([]*def.Post, error) {
 	start := pageSize * (page - 1)
+	tags := strings.Fields(tag)
 
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts INNER JOIN users ON posts.uid = users.id 
-WHERE posts.status =? OR posts.sort=? OR posts.type=? OR posts.uid =? ORDER BY time DESC limit ?,?`)
-
-	if err != nil {
-		log.Printf("%s", err)
-		return nil, err
+	var query string
+	if status != "" {
+		query = fmt.Sprintf(`AND posts.status ='%s'`, status)
 	}
+
+	if sort != "" && sort != "bgm" {
+		query += fmt.Sprintf(`AND posts.sort ='%s'`, sort)
+	}
+
+	if uid != 0 {
+		query += fmt.Sprintf(`AND posts.uid ='%x'`, uid)
+	}
+
+	if len(tags) != 0 {
+		query += `AND (1=2`
+		for i := 0; i < len(tags); i++ {
+			key := string("%" + tags[i] + "%")
+			query += fmt.Sprintf(`OR posts.tag LIKE '%s'`, key)
+		}
+		query += `)`
+
+	}
+
+	if sort == "bgm" {
+		query += `AND NOT posts.sort='ugc'`
+	}
+
+	sqlRaw := fmt.Sprintf(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
+WHERE 1=1 %s ORDER BY time DESC limit ?,?`, query)
+
+	stmtOut, _ := dbConn.Prepare(sqlRaw)
 
 	var res []*def.Post
 
-	rows, err := stmtOut.Query(status, sort, tag, uid, start, pageSize)
-	if err != nil {
-		log.Printf("%s", err)
-		return res, err
-	}
+	rows, _ := stmtOut.Query(start, pageSize)
 
-	for rows.Next() {
-		var id, uid int
-		var title, content, status, sort, tag, ctime, uname, uqq string
-		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
-			log.Printf("%s", err)
-			return res, err
-		}
-		count, _ := GetCount(id)
-		p := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
-
-		res = append(res, p)
-	}
 	defer stmtOut.Close()
 
-	return res, nil
-
-}
-
-func GetPostsBoth(status string, sort string, tag string, uid int, page int, pageSize int) ([]*def.Post, error) {
-	start := pageSize * (page - 1)
-	log.Printf("%x", start)
-
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
-WHERE (posts.sort=? OR posts.uid =? OR posts.type=?) AND posts.status =? ORDER BY time DESC limit ?,?`)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var res []*def.Post
-
-	rows, err := stmtOut.Query(sort, uid, tag, status, start, pageSize)
-	if err != nil {
-		return res, err
-	}
-
 	for rows.Next() {
 		var id, uid int
 		var title, content, status, sort, tag, ctime, uname, uqq string
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
-		count, _ := GetCount(id)
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
+		count, _ := GetCommentCount(id)
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 		res = append(res, c)
 	}
-	defer stmtOut.Close()
 
 	return res, nil
 
@@ -159,7 +146,7 @@ WHERE (posts.sort=? OR posts.uid =? OR posts.type=?) AND posts.status =? ORDER B
 
 func SearchPosts(key string) ([]*def.Post, error) {
 	key = string("%" + key + "%")
-	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.type,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id WHERE title LIKE ? OR content LIKE ?")
+	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id WHERE title LIKE ? OR content LIKE ?")
 
 	var res []*def.Post
 
@@ -174,9 +161,9 @@ func SearchPosts(key string) ([]*def.Post, error) {
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
-		count, _ := GetCount(id)
+		count, _ := GetCommentCount(id)
 
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Type: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()

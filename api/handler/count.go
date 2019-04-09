@@ -8,9 +8,9 @@ import (
 	"github.com/132yse/acgzone-server/api/def"
 )
 
-func GetCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func GetCommentCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid, _ := strconv.Atoi(p.ByName("pid"))
-	resp, err := db.GetCount(pid)
+	resp, err := db.GetCommentCount(pid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
@@ -19,16 +19,3 @@ func GetCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendCountResponse(w, res, 201)
 	}
 }
-//
-//func AddPageView(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-//	pid, _ := strconv.Atoi(p.ByName("pid"))
-//
-//	err := db.AddPageView(pid)
-//	if err != nil {
-//		sendErrorResponse(w, def.ErrorDB)
-//		return
-//	} else {
-//		sendErrorResponse(w, def.Success)
-//
-//	}
-//}

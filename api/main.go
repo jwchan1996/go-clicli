@@ -9,31 +9,35 @@ import (
 func RegisterHandler() *httprouter.Router {
 	router := httprouter.New()
 
-	router.POST("/register", handler.Register)
-	router.POST("/api/login", handler.Login)
+	router.POST("/user/register", handler.Register)
+	router.POST("/user/login", handler.Login)
+	router.POST("/user/logout", handler.Logout)
 	router.POST("/user/update/:id", handler.UpdateUser)
 	router.POST("/user/delete/:id", handler.DeleteUser)
+	router.GET("/users", handler.GetUsers)
+	router.GET("/user", handler.GetUser)
+
 	router.POST("/post/add", handler.AddPost)
 	router.POST("/post/delete/:id", handler.DeletePost)
 	router.POST("/post/update/:id", handler.UpdatePost)
+	router.GET("/post/:id", handler.GetPost)
+	router.GET("/posts", handler.GetPosts)
+
 	router.POST("/comment/add", handler.AddComment)
+	router.DELETE("/comment/delete", handler.DeleteComment)
+	router.GET("/comments", handler.GetComments)
+
 	router.POST("/video/add", handler.AddVideo)
 	router.POST("/video/update/:id", handler.UpdateVideo)
-	router.POST("/logout", handler.Logout)
-	router.DELETE("/delete/video", handler.DeleteVideo)
-	router.DELETE("/delete/comment", handler.DeleteComment)
-	router.GET("/user", handler.GetUser)
-	router.GET("/post/:id", handler.GetPost)
+	router.DELETE("/video/delete", handler.DeleteVideo)
 	router.GET("/video/:id", handler.GetVideo)
-	router.GET("/comments", handler.GetComments)
 	router.GET("/videos", handler.GetVideos)
-	router.GET("/posts/type", handler.GetPostsOneOf)
-	router.GET("/posts/both", handler.GetPostsBoth)
-	router.GET("/users", handler.GetUsers)
+
 	router.GET("/search/posts", handler.SearchPosts)
 	router.GET("/search/users", handler.SearchUsers)
+
 	router.GET("/auth", handler.Auth)
-	router.GET("/count/:pid", handler.GetCount)
+
 	router.POST("/cookie/replace", handler.ReplaceCookie)
 	router.GET("/cookie/:uid", handler.GetCookie)
 
