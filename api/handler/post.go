@@ -51,7 +51,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Tag); err != nil {
+	if resp, err := db.UpdatePost(pint, pbody.Title, pbody.Content, pbody.Status, pbody.Sort, pbody.Tag, pbody.Time); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {

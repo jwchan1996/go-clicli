@@ -29,21 +29,19 @@ func AddPost(title string, content string, status string, sort string, tag strin
 	return res, err
 }
 
-func UpdatePost(id int, title string, content string, status string, sort string, tag string) (*def.Post, error) {
-	t := time.Now()
-	ctime := t.Format("2006-01-02 15:04")
+func UpdatePost(id int, title string, content string, status string, sort string, tag string, time string) (*def.Post, error) {
 	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,type=?,time=? WHERE id =?")
 	if err != nil {
 		return nil, err
 
 	}
-	_, err = stmtIns.Exec(&title, &content, &status, &sort, &tag, &ctime, &id)
+	_, err = stmtIns.Exec(&title, &content, &status, &sort, &tag, &time, &id)
 	if err != nil {
 		return nil, err
 	}
 	defer stmtIns.Close()
 
-	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime}
+	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: time}
 	defer stmtIns.Close()
 	return res, err
 }
