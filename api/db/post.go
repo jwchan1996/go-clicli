@@ -102,17 +102,17 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 		query += fmt.Sprintf(`AND posts.uid ='%x'`, uid)
 	}
 
+	if sort == "bgm" {
+		query += `AND NOT posts.sort='ugc'`
+	}
+
 	if len(tags) != 0 {
-		query += `AND (1=2`
+		query += `AND (1=2 `
 		for i := 0; i < len(tags); i++ {
 			key := string("%" + tags[i] + "%")
 			query += fmt.Sprintf(`OR posts.tag LIKE '%s'`, key)
 		}
 		query += `)`
-	}
-
-	if sort == "bgm" {
-		query += `AND NOT posts.sort='ugc'`
 	}
 
 	sqlRaw := fmt.Sprintf(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
