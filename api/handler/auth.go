@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+//登陆校验，只负责校验登陆与否
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	uname, _ := r.Cookie("uname")
 	name, _ := base64.StdEncoding.DecodeString(uname.Value)
@@ -18,7 +19,7 @@ func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
-	token, _ := r.Cookie("token") //从 cookie 里取 token
+	token, _ := r.Cookie("token")                      //从 cookie 里取 token
 	newToken := util.CreateToken(resp.Name, resp.Role) //服务端生成新的 token
 
 	if token.Value == newToken {
@@ -27,5 +28,26 @@ func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 	}
+}
 
+//鉴权校验，负责判断是否具有编辑和审核权限
+func RightAuth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) string {
+	uname, _ := r.Cookie("uname")
+	name, _ := base64.StdEncoding.DecodeString(uname.Value)
+
+	resp, err := db.GetUser(string(name), 0)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return ""
+	}
+	token, _ := r.Cookie("token")                      //从 cookie 里取 token
+	newToken := util.CreateToken(resp.Name, resp.Role) //服务端生成新的 token
+
+	if token.Value == newToken { //已经登陆
+		if resp.Role == "admin" || resp.Role == "editor" {
+			return resp.Role
+		}
+	} else {
+		return ""
+	}
 }

@@ -78,6 +78,11 @@ func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	role := RightAuth(w, r, p)
+	if role != "admin" {
+		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		return
+	}
 	pid := p.ByName("id")
 	pint, _ := strconv.Atoi(pid)
 
@@ -106,7 +111,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-
+	role := RightAuth(w, r, p)
+	if role != "admin" {
+		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		return
+	}
 	uid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeleteUser(uid)
 	if err != nil {
