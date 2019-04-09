@@ -6,12 +6,13 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"log"
 )
 
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
 	t := time.Now()
 	ctime := t.Format("2006-01-02 15:04")
-	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,type,time,uid) VALUES (?,?,?,?,?,?,?)")
+	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,tag,time,uid) VALUES (?,?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
 
@@ -30,7 +31,7 @@ func AddPost(title string, content string, status string, sort string, tag strin
 }
 
 func UpdatePost(id int, title string, content string, status string, sort string, tag string, time string) (*def.Post, error) {
-	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,type=?,time=? WHERE id =?")
+	stmtIns, err := dbConn.Prepare("UPDATE posts SET title=?,content=?,status=?,sort=?,tag=?,time=? WHERE id =?")
 	if err != nil {
 		return nil, err
 
@@ -63,7 +64,7 @@ func DeletePost(id int) error {
 }
 
 func GetPost(id int) (*def.Post, error) {
-	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.type,posts.time,users.id,users.name,users.qq FROM posts 
+	stmtOut, err := dbConn.Prepare(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts 
 INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	if err != nil {
 		return nil, err
@@ -118,11 +119,14 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	sqlRaw := fmt.Sprintf(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
 WHERE 1=1 %s ORDER BY time DESC limit ?,?`, query)
 
-	stmtOut, _ := dbConn.Prepare(sqlRaw)
+	stmtOut, err := dbConn.Prepare(sqlRaw)
+	if err != nil {
+		log.Printf("%s", err)
+	}
 
 	var res []*def.Post
 
-	rows, _ := stmtOut.Query(start, pageSize)
+	rows, err := stmtOut.Query(start, pageSize)
 
 	defer stmtOut.Close()
 

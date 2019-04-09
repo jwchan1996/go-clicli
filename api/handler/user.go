@@ -72,7 +72,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 }
 
-func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: DOMAIN, MaxAge: -1}
 	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: DOMAIN, MaxAge: -1}
 	http.SetCookie(w, &cookieId)

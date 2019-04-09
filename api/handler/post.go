@@ -12,11 +12,11 @@ import (
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	role := RightAuth(w, r, p)
-	if role == "user" {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
-		return
-	}
+	//role := RightAuth(w, r, p)
+	//if role == "user" {
+	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+	//	return
+	//}
 	req, _ := ioutil.ReadAll(r.Body)
 	pbody := &def.Post{}
 
@@ -37,11 +37,11 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	role := RightAuth(w, r, p)
-	if role != "admin" || role != "editor" {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
-		return
-	}
+	//role := RightAuth(w, r, p)
+	//if role != "admin" || role != "editor" {
+	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+	//	return
+	//}
 	pid := p.ByName("id")
 	pint, _ := strconv.Atoi(pid)
 	req, _ := ioutil.ReadAll(r.Body)
@@ -63,7 +63,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	role := RightAuth(w, r, p)
-	if role != "admin" || role != "editor" {
+	if role != "admin" && role != "editor" {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
 		return
 	}
@@ -81,6 +81,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetPost(pid)
 	if err != nil {
+		log.Printf("%s",err)
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
@@ -96,7 +97,6 @@ func GetPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
-	log.Printf("%s", tag)
 	resp, err := db.GetPosts(page, pageSize, status, sort, tag, uid)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
