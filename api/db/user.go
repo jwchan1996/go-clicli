@@ -22,7 +22,7 @@ func CreateUser(name string, pwd string, role string, qq int, sign string) error
 	return nil
 }
 
-func UpdateUser(id int, name string, pwd string, role string, qq int, sign string) (*def.UserCredential, error) {
+func UpdateUser(id int, name string, pwd string, role string, qq int, sign string) (*def.User, error) {
 	if pwd == "" {
 		stmtIns, err := dbConn.Prepare("UPDATE users SET name=?,role=?,qq=?,sign=? WHERE id =?")
 		if err != nil {
@@ -34,7 +34,7 @@ func UpdateUser(id int, name string, pwd string, role string, qq int, sign strin
 		}
 		defer stmtIns.Close()
 
-		res := &def.UserCredential{Id: id, Name: name, QQ: qq, Role: role, Desc: sign}
+		res := &def.User{Id: id, Name: name, QQ: qq, Role: role, Desc: sign}
 		defer stmtIns.Close()
 		return res, err
 	} else {
@@ -49,14 +49,14 @@ func UpdateUser(id int, name string, pwd string, role string, qq int, sign strin
 		}
 		defer stmtIns.Close()
 
-		res := &def.UserCredential{Id: id, Name: name, Pwd: pwd, QQ: qq, Role: role, Desc: sign}
+		res := &def.User{Id: id, Name: name, Pwd: pwd, QQ: qq, Role: role, Desc: sign}
 		defer stmtIns.Close()
 		return res, err
 	}
 
 }
 
-func GetUser(name string, id int) (*def.UserCredential, error) {
+func GetUser(name string, id int) (*def.User, error) {
 	stmtOut, err := dbConn.Prepare("SELECT id,name,pwd,role,qq,sign FROM users WHERE name = ? OR id = ?")
 	if err != nil {
 		return nil, err
@@ -71,19 +71,19 @@ func GetUser(name string, id int) (*def.UserCredential, error) {
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-	res := &def.UserCredential{Id: id, Pwd: pwd, Name: name, Role: role, QQ: qq, Desc: sign}
+	res := &def.User{Id: id, Pwd: pwd, Name: name, Role: role, QQ: qq, Desc: sign}
 
 	defer stmtOut.Close()
 
 	return res, nil
 }
 
-func GetUsers(role string, page int, pageSize int) ([]*def.UserCredential, error) {
+func GetUsers(role string, page int, pageSize int) ([]*def.User, error) {
 	start := pageSize * (page - 1)
 
 	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE role =? limit ?,?")
 
-	var res []*def.UserCredential
+	var res []*def.User
 
 	rows, err := stmtOut.Query(role, start, pageSize)
 	if err != nil {
@@ -97,7 +97,7 @@ func GetUsers(role string, page int, pageSize int) ([]*def.UserCredential, error
 			return res, err
 		}
 
-		c := &def.UserCredential{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
+		c := &def.User{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()
@@ -106,11 +106,11 @@ func GetUsers(role string, page int, pageSize int) ([]*def.UserCredential, error
 
 }
 
-func SearchUsers(key string) ([]*def.UserCredential, error) {
+func SearchUsers(key string) ([]*def.User, error) {
 	key = string("%" + key + "%")
 	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE name LIKE ?")
 
-	var res []*def.UserCredential
+	var res []*def.User
 
 	rows, err := stmtOut.Query(key)
 	if err != nil {
@@ -124,7 +124,7 @@ func SearchUsers(key string) ([]*def.UserCredential, error) {
 			return res, err
 		}
 
-		c := &def.UserCredential{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
+		c := &def.User{Id: id, Name: name, Role: role, QQ: qq, Desc: sign}
 		res = append(res, c)
 	}
 	defer stmtOut.Close()

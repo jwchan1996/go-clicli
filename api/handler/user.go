@@ -8,14 +8,13 @@ import (
 	"github.com/132yse/acgzone-server/api/util"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 )
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
-	ubody := &def.UserCredential{}
+	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -38,7 +37,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
-	ubody := &def.UserCredential{}
+	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -54,6 +53,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	} else {
 		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
 		token := util.CreateToken(uanme, resp.Role)
+
 		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: "clicli.top"}
 		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: "clicli.top"}
 		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: "clicli.top"}
@@ -62,7 +62,8 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.SetCookie(w, &cookieQq)
 		http.SetCookie(w, &cookieUid)
 		http.SetCookie(w, &cookieToken)
-		res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+
+		res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
 
@@ -77,17 +78,11 @@ func Logout(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	err := userAuth(w, r, p)
-	if err != nil {
-		log.Printf("%s", err)
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
 	pid := p.ByName("id")
 	pint, _ := strconv.Atoi(pid)
 
 	req, _ := ioutil.ReadAll(r.Body)
-	ubody := &def.UserCredential{}
+	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -100,7 +95,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 			sendErrorResponse(w, def.ErrorDB)
 			return
 		} else {
-			ret := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+			ret := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 			sendUserResponse(w, ret, 201, "更新成功啦")
 		}
 	} else {
@@ -130,7 +125,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
-	res := &def.UserCredential{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+	res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 	sendUserResponse(w, res, 201, "")
 
 }

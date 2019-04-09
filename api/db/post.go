@@ -111,7 +111,6 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 			query += fmt.Sprintf(`OR posts.tag LIKE '%s'`, key)
 		}
 		query += `)`
-
 	}
 
 	if sort == "bgm" {
@@ -155,6 +154,8 @@ func SearchPosts(key string) ([]*def.Post, error) {
 		return res, err
 	}
 
+	defer stmtOut.Close()
+
 	for rows.Next() {
 		var id, uid int
 		var title, content, status, sort, tag, ctime, uname, uqq string
@@ -166,7 +167,6 @@ func SearchPosts(key string) ([]*def.Post, error) {
 		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 		res = append(res, c)
 	}
-	defer stmtOut.Close()
 
 	return res, nil
 }

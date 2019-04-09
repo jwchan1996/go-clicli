@@ -1,6 +1,6 @@
 package def
 
-type UserCredential struct {
+type User struct {
 	Id   int    `json:"id,omitempty"`
 	Name string `json:"name"`
 	Pwd  string `json:"pwd,omitempty"`
@@ -55,7 +55,7 @@ type Posts struct {
 }
 
 type Users struct {
-	Users []*UserCredential `json:"users"`
+	Users []*User `json:"users"`
 }
 
 type Comments struct {

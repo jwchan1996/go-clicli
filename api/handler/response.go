@@ -12,12 +12,12 @@ func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 	io.WriteString(w, string(resStr))
 }
 
-func sendUserResponse(w http.ResponseWriter, uRes *def.UserCredential, sc int, msg string) {
+func sendUserResponse(w http.ResponseWriter, uRes *def.User, sc int, msg string) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
-		Code int                `json:"code"`
-		Msg  string             `json:"msg,omitempty"`
-		User def.UserCredential `json:"user"`
+		Code int      `json:"code"`
+		Msg  string   `json:"msg,omitempty"`
+		User def.User `json:"user"`
 	}{sc, msg, *uRes})
 
 	io.WriteString(w, string(resStr))
@@ -94,7 +94,6 @@ func sendVideosResponse(w http.ResponseWriter, Res *def.Videos, sc int) {
 	io.WriteString(w, string(resStr))
 }
 
-
 func sendCountResponse(w http.ResponseWriter, cRes def.Count, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
@@ -108,7 +107,7 @@ func sendCountResponse(w http.ResponseWriter, cRes def.Count, sc int) {
 func sendCookieResponse(w http.ResponseWriter, cRes def.Cookie, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
-		Code   int         `json:"code"`
+		Code   int        `json:"code"`
 		Result def.Cookie `json:"result"`
 	}{sc, cRes})
 
