@@ -82,11 +82,11 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	pid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetPost(pid)
 	if err != nil {
-		log.Printf("%s",err)
+		log.Printf("%s", err)
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
+		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq, Count: resp.Count}
 		sendPostResponse(w, res, 201)
 	}
 }

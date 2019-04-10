@@ -5,7 +5,7 @@ type User struct {
 	Name string `json:"name"`
 	Pwd  string `json:"pwd,omitempty"`
 	Role string `json:"role"`
-	QQ   string    `json:"qq"`
+	QQ   string `json:"qq"`
 	Desc string `json:"desc"`
 }
 
@@ -20,7 +20,7 @@ type Post struct {
 	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`
-	Count   *Count `json:"count,omitempty"`
+	Count   *Count `json:"count"`
 }
 
 type Comment struct {

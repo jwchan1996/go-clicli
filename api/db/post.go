@@ -81,7 +81,11 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	}
 	defer stmtOut.Close()
 
-	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
+	count, err := GetCommentCount(id)
+
+	log.Printf("%s",count)
+
+	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 
 	return res, nil
 }
