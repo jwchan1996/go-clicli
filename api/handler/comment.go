@@ -33,6 +33,7 @@ func AddComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	Cross(w)
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	vid, _ := strconv.Atoi(r.URL.Query().Get("vid"))

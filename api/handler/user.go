@@ -130,6 +130,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	uname := r.URL.Query().Get("uname")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	resp, err := db.GetUser(uname, uid)
@@ -143,6 +144,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	Cross(w)
 	role := r.URL.Query().Get("role")
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))

@@ -8,7 +8,6 @@ import (
 
 func RegisterHandler() *httprouter.Router {
 	router := httprouter.New()
-
 	router.POST("/user/register", handler.Register)
 	router.POST("/user/login", handler.Login)
 	router.POST("/user/logout", handler.Logout)

@@ -52,3 +52,9 @@ func RightAuth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) stri
 	}
 	return ""
 }
+
+func Cross(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("content-type", "application/json")
+}

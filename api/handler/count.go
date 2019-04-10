@@ -9,6 +9,7 @@ import (
 )
 
 func GetCommentCount(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	pid, _ := strconv.Atoi(p.ByName("pid"))
 	resp, err := db.GetCommentCount(pid)
 	if err != nil {
