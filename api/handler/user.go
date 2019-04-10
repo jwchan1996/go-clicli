@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"log"
 )
 
 const DOMAIN = `clicli.us`
@@ -58,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		token := util.CreateToken(uanme, resp.Role)
 
 		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: DOMAIN}
-		cookieQq := http.Cookie{Name: "uqq", Value: strconv.Itoa(resp.QQ), Path: "/", Domain: DOMAIN, MaxAge: int(time.Hour * 24 / time.Second)}
+		cookieQq := http.Cookie{Name: "uqq", Value: resp.QQ, Path: "/", Domain: DOMAIN, MaxAge: int(time.Hour * 24 / time.Second)}
 		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: DOMAIN}
 		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: DOMAIN, HttpOnly: true}
 		http.SetCookie(w, &cookieName)
@@ -135,6 +136,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	resp, err := db.GetUser(uname, uid)
 	if err != nil {
+		log.Printf("%s",err)
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}

@@ -7,7 +7,7 @@ import (
 	"database/sql"
 )
 
-func CreateUser(name string, pwd string, role string, qq int, sign string) error {
+func CreateUser(name string, pwd string, role string, qq string, sign string) error {
 	pwd = util.Cipher(pwd)
 	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,role,qq,sign) VALUES (?,?,?,?,?)")
 	if err != nil {
@@ -22,7 +22,7 @@ func CreateUser(name string, pwd string, role string, qq int, sign string) error
 	return nil
 }
 
-func UpdateUser(id int, name string, pwd string, role string, qq int, sign string) (*def.User, error) {
+func UpdateUser(id int, name string, pwd string, role string, qq string, sign string) (*def.User, error) {
 	if pwd == "" {
 		stmtIns, err := dbConn.Prepare("UPDATE users SET name=?,role=?,qq=?,sign=? WHERE id =?")
 		if err != nil {
@@ -62,8 +62,7 @@ func GetUser(name string, id int) (*def.User, error) {
 		return nil, err
 	}
 
-	var qq int
-	var pwd, role, sign string
+	var pwd, role, sign, qq string
 	err = stmtOut.QueryRow(name, id).Scan(&id, &name, &pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
@@ -91,8 +90,8 @@ func GetUsers(role string, page int, pageSize int) ([]*def.User, error) {
 	}
 
 	for rows.Next() {
-		var id, qq int
-		var name, role, sign string
+		var id int
+		var name, role, sign, qq string
 		if err := rows.Scan(&id, &name, &role, &qq, &sign); err != nil {
 			return res, err
 		}
@@ -118,8 +117,8 @@ func SearchUsers(key string) ([]*def.User, error) {
 	}
 
 	for rows.Next() {
-		var id, qq int
-		var name, role, sign string
+		var id int
+		var name, role, sign , qq string
 		if err := rows.Scan(&id, &name, &role, &qq, &sign); err != nil {
 			return res, err
 		}
