@@ -5,6 +5,7 @@ import (
 	"github.com/132yse/acgzone-server/api/util"
 	"github.com/132yse/acgzone-server/api/def"
 	"database/sql"
+	"fmt"
 )
 
 func CreateUser(name string, pwd string, role string, qq string, sign string) error {
@@ -57,13 +58,19 @@ func UpdateUser(id int, name string, pwd string, role string, qq string, sign st
 }
 
 func GetUser(name string, id int) (*def.User, error) {
-	stmtOut, err := dbConn.Prepare("SELECT id,name,pwd,role,qq,sign FROM users WHERE name = ? OR id = ?")
+	var query string
+	if name != "" {
+		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE name = %s`,name)
+	} else {
+		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE id = %d`,id)
+	}
+	stmtOut, err := dbConn.Prepare(query)
 	if err != nil {
 		return nil, err
 	}
 
 	var pwd, role, sign, qq string
-	err = stmtOut.QueryRow(name, id).Scan(&id, &name, &pwd, &role, &qq, &sign)
+	err = stmtOut.QueryRow().Scan(&id, &name, &pwd, &role, &qq, &sign)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -118,7 +125,7 @@ func SearchUsers(key string) ([]*def.User, error) {
 
 	for rows.Next() {
 		var id int
-		var name, role, sign , qq string
+		var name, role, sign, qq string
 		if err := rows.Scan(&id, &name, &role, &qq, &sign); err != nil {
 			return res, err
 		}
