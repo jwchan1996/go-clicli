@@ -82,9 +82,6 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	defer stmtOut.Close()
 
 	count, err := GetCommentCount(id)
-
-	log.Printf("%s",count)
-
 	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
 
 	return res, nil
@@ -104,7 +101,7 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	}
 
 	if uid != 0 {
-		query += fmt.Sprintf(`AND posts.uid ='%x'`, uid)
+		query += fmt.Sprintf(`AND posts.uid ='%d'`, uid)
 	}
 
 	if sort == "bgm" {
