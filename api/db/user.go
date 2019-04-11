@@ -60,9 +60,9 @@ func UpdateUser(id int, name string, pwd string, role string, qq string, sign st
 func GetUser(name string, id int) (*def.User, error) {
 	var query string
 	if name != "" {
-		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE name = %s`,name)
+		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE name = %s`, name)
 	} else {
-		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE id = %d`,id)
+		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE id = %d`, id)
 	}
 	stmtOut, err := dbConn.Prepare(query)
 	if err != nil {
