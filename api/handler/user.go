@@ -17,6 +17,7 @@ import (
 const DOMAIN = `clicli.us`
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	Cross(w)
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.User{}
 
@@ -40,6 +41,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	Cross(w)
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.User{}
 
@@ -74,6 +76,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
+	Cross(w)
 	cookieId := http.Cookie{Name: "uname", Path: "/", Domain: DOMAIN, MaxAge: -1}
 	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: DOMAIN, MaxAge: -1}
 	http.SetCookie(w, &cookieId)
@@ -82,6 +85,7 @@ func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	role := RightAuth(w, r, p)
 	if role != "admin" {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -115,6 +119,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	role := RightAuth(w, r, p)
 	if role != "admin" {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -162,6 +167,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func SearchUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	Cross(w)
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchUsers(key)

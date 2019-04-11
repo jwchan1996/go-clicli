@@ -1,0 +1,1 @@
+ps -ef | grep procedure_name | grep -v grep | awk '{print $2}' | xargs kill -9

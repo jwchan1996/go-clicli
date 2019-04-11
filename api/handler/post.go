@@ -12,6 +12,7 @@ import (
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	//role := RightAuth(w, r, p)
 	//if role == "user" {
 	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -37,6 +38,7 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	//role := RightAuth(w, r, p)
 	//if role != "admin" || role != "editor" {
 	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -62,6 +64,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	Cross(w)
 	role := RightAuth(w, r, p)
 	if role != "admin" && role != "editor" {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
