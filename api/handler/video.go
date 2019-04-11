@@ -11,7 +11,6 @@ import (
 )
 
 func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	req, _ := ioutil.ReadAll(r.Body)
 	body := &def.Video{}
 
@@ -31,7 +30,6 @@ func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UpdateVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	id := p.ByName("id")
 	vid, _ := strconv.Atoi(id)
 	req, _ := ioutil.ReadAll(r.Body)
@@ -53,7 +51,7 @@ func UpdateVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetVideos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w)
+	Cross(w,r)
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
@@ -69,7 +67,7 @@ func GetVideos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
+	Cross(w,r)
 	vid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetVideo(vid)
 	if err != nil {
@@ -82,7 +80,6 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeleteVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 

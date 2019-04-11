@@ -13,6 +13,7 @@ func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 }
 
 func sendUserResponse(w http.ResponseWriter, uRes *def.User, sc int, msg string) {
+	Cross(w)
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
 		Code int      `json:"code"`
@@ -90,16 +91,6 @@ func sendVideosResponse(w http.ResponseWriter, Res *def.Videos, sc int) {
 		Code int `json:"code"`
 		*def.Videos
 	}{sc, Res})
-
-	io.WriteString(w, string(resStr))
-}
-
-func sendCountResponse(w http.ResponseWriter, cRes def.Count, sc int) {
-	w.WriteHeader(sc)
-	resStr, _ := json.Marshal(struct {
-		Code  int       `json:"code"`
-		Count def.Count `json:"count"`
-	}{sc, cRes})
 
 	io.WriteString(w, string(resStr))
 }

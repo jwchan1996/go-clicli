@@ -12,7 +12,6 @@ import (
 )
 
 func AddComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	req, _ := ioutil.ReadAll(r.Body)
 	cbody := &def.Comment{}
 
@@ -33,7 +32,7 @@ func AddComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w)
+	Cross(w,r)
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	vid, _ := strconv.Atoi(r.URL.Query().Get("vid"))
@@ -51,7 +50,6 @@ func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func DeleteComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	err := db.DeleteComment(id, pid)

@@ -12,7 +12,6 @@ import (
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	//role := RightAuth(w, r, p)
 	//if role == "user" {
 	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -38,7 +37,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	//role := RightAuth(w, r, p)
 	//if role != "admin" || role != "editor" {
 	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -64,7 +62,6 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
 	role := RightAuth(w, r, p)
 	if role != "admin" && role != "editor" {
 		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
@@ -81,7 +78,7 @@ func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w)
+	Cross(w,r)
 	pid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetPost(pid)
 	if err != nil {
@@ -95,7 +92,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w)
+	Cross(w,r)
 	status := r.URL.Query().Get("status")
 	sort := r.URL.Query().Get("sort")
 	tag := r.URL.Query().Get("tag")
@@ -113,7 +110,7 @@ func GetPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func SearchPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w)
+	Cross(w, r)
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchPosts(key)

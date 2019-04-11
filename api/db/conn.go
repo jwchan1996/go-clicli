@@ -16,5 +16,4 @@ func init() {
 		panic(err.Error())
 	}
 }
-
-//root:changhao2333@tcp(localhost:3306)/clicli?charset=utf8
+//root:root@tcp(localhost:3306)/clicli?charset=utf8
