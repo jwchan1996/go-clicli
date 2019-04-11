@@ -11,7 +11,7 @@ import (
 
 //登陆校验，只负责校验登陆与否
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w)
+	Cross(w,r)
 	uqq, err := r.Cookie("uqq")
 	if err != nil || uqq == nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
@@ -49,7 +49,5 @@ func Cross(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE")
 	w.Header().Add("content-type", "application/json")
-	if r.Method == "OPTIONS" {
-		return
-	}
+	w.Header().Add("Access-Control-Allow-Credentials","true")
 }

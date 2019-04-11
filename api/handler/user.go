@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"github.com/132yse/acgzone-server/api/db"
 	"github.com/132yse/acgzone-server/api/def"
@@ -10,11 +9,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"time"
 	"log"
 )
 
-const DOMAIN = `clicli.us`
+const DOMAIN = "clicli.us"
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
@@ -40,7 +38,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w,r)
+	Cross(w, r)
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.User{}
 
@@ -54,21 +52,8 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
-		log.Printf("%s", err)
 		return
 	} else {
-		uanme := base64.StdEncoding.EncodeToString([]byte(resp.Name))
-		token := util.CreateToken(uanme, resp.Role)
-
-		cookieName := http.Cookie{Name: "uname", Value: uanme, Path: "/", Domain: DOMAIN}
-		cookieQq := http.Cookie{Name: "uqq", Value: resp.QQ, Path: "/", Domain: DOMAIN, MaxAge: int(time.Hour * 24 / time.Second)}
-		cookieUid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", Domain: DOMAIN}
-		cookieToken := http.Cookie{Name: "token", Value: token, Path: "/", Domain: DOMAIN, HttpOnly: true}
-		http.SetCookie(w, &cookieName)
-		http.SetCookie(w, &cookieQq)
-		http.SetCookie(w, &cookieUid)
-		http.SetCookie(w, &cookieToken)
-
 		res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
@@ -133,7 +118,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w,r)
+	Cross(w, r)
 	uname := r.URL.Query().Get("uname")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	resp, err := db.GetUser(uname, uid)
@@ -148,7 +133,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w,r)
+	Cross(w, r)
 	role := r.URL.Query().Get("role")
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
@@ -164,7 +149,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func SearchUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w,r)
+	Cross(w, r)
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchUsers(key)

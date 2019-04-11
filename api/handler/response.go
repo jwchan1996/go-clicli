@@ -13,8 +13,10 @@ func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
 }
 
 func sendUserResponse(w http.ResponseWriter, uRes *def.User, sc int, msg string) {
-	Cross(w)
 	w.WriteHeader(sc)
+	qq := http.Cookie{Name: "uqq", Value: uRes.QQ, Path: "/", MaxAge: 86400, Domain: "clicli.us"}
+	http.SetCookie(w, &qq)
+
 	resStr, _ := json.Marshal(struct {
 		Code int      `json:"code"`
 		Msg  string   `json:"msg,omitempty"`
