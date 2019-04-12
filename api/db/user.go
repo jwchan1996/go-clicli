@@ -64,7 +64,6 @@ func GetUser(name string, id int) (*def.User, error) {
 	} else {
 		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE id = %d`, id)
 	}
-	log.Printf("%s",query)
 	stmtOut, err := dbConn.Prepare(query)
 	if err != nil {
 		return nil, err
@@ -88,11 +87,18 @@ func GetUser(name string, id int) (*def.User, error) {
 func GetUsers(role string, page int, pageSize int) ([]*def.User, error) {
 	start := pageSize * (page - 1)
 
-	stmtOut, err := dbConn.Prepare("SELECT id, name, role, qq, sign FROM users WHERE role =? limit ?,?")
+	var query string
+	if role == "up" {
+		query += `NOT role = 'user'`
+	} else {
+		query += fmt.Sprintf(`role = '%s'`, role)
+	}
+	rawSql := fmt.Sprintf(`SELECT id, name, role, qq, sign FROM users WHERE %s limit ?,?`, query)
+	stmtOut, err := dbConn.Prepare(rawSql)
 
 	var res []*def.User
 
-	rows, err := stmtOut.Query(role, start, pageSize)
+	rows, err := stmtOut.Query(start, pageSize)
 	if err != nil {
 		return res, err
 	}
