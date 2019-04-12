@@ -105,7 +105,7 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	}
 
 	if sort == "bgm" {
-		query += `AND NOT posts.sort='ugc'`
+		query += `AND NOT posts.sort='原创'`
 	}
 
 	if len(tags) != 0 {
