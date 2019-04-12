@@ -38,7 +38,6 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w, r)
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.User{}
 
@@ -54,6 +53,10 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	} else {
+		qq := http.Cookie{Name: "uqq", Value: resp.QQ, Path: "/", MaxAge: 86400, Domain: DOMAIN}
+		uid := http.Cookie{Name: "uid", Value: string(resp.Id), Path: "/", MaxAge: 86400, Domain: DOMAIN}
+		http.SetCookie(w, &qq)
+		http.SetCookie(w, &uid)
 		res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
