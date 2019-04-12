@@ -7,18 +7,26 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/132yse/acgzone-server/api/util"
 	"net/http"
+	"strconv"
 )
 
 //登陆校验，只负责校验登陆与否
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	Cross(w, r)
-	uqq, err := r.Cookie("uqq")
-	if err != nil || uqq == nil {
+	uid, err := r.Cookie("uid")
+	if err != nil || uid == nil {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
-	} else {
-		sendErrorResponse(w, def.Success)
 	}
+	id, _ := strconv.Atoi(uid.Value)
+	resp, err := db.GetUser("", id)
+	if err != nil {
+		sendErrorResponse(w, def.ErrorNotAuthUser)
+		return
+	}
+
+	res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+	sendUserResponse(w, res, 201, "")
 }
 
 //鉴权校验，负责判断是否具有编辑和审核权限
