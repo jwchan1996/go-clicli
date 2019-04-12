@@ -54,7 +54,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	} else {
 		qq := http.Cookie{Name: "uqq", Value: resp.QQ, Path: "/", MaxAge: 86400, Domain: DOMAIN}
-		uid := http.Cookie{Name: "uid", Value: string(resp.Id), Path: "/", MaxAge: 86400, Domain: DOMAIN}
+		uid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &qq)
 		http.SetCookie(w, &uid)
 		res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
