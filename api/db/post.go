@@ -92,7 +92,7 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	tags := strings.Fields(tag)
 
 	var query string
-	if status != "" {
+	if status != "" && status != "nowait" {
 		query = fmt.Sprintf(`AND posts.status ='%s'`, status)
 	}
 
@@ -106,6 +106,9 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 
 	if sort == "bgm" {
 		query += `AND NOT posts.sort='原创'`
+	}
+	if status == "nowait" {
+		query += `AND NOT posts.status='wait'`
 	}
 
 	if len(tags) != 0 {

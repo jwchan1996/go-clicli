@@ -37,11 +37,6 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	//role := RightAuth(w, r, p)
-	//if role != "admin" || role != "editor" {
-	//	sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
-	//	return
-	//}
 	pid := p.ByName("id")
 	pint, _ := strconv.Atoi(pid)
 	req, _ := ioutil.ReadAll(r.Body)
@@ -62,11 +57,6 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeletePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	role := RightAuth(w, r, p)
-	if role != "admin" && role != "editor" {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
-		return
-	}
 	pid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeletePost(pid)
 	if err != nil {
