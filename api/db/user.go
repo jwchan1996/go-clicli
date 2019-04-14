@@ -60,17 +60,21 @@ func UpdateUser(id int, name string, pwd string, role string, qq string, sign st
 func GetUser(name string, id int) (*def.User, error) {
 	var query string
 	if name != "" {
-		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE name = '%s'`, name)
+		query += `SELECT id,name,pwd,role,qq,sign FROM users WHERE name = ?`
 	} else {
-		query += fmt.Sprintf(`SELECT id,name,pwd,role,qq,sign FROM users WHERE id = %d`, id)
+		query += `SELECT id,name,pwd,role,qq,sign FROM users WHERE id = ？`
 	}
-	stmtOut, err := dbConn.Prepare(query)
-	if err != nil {
-		return nil, err
-	}
+	stmt, _ := dbConn.Prepare(query)
 
 	var pwd, role, sign, qq string
-	err = stmtOut.QueryRow().Scan(&id, &name, &pwd, &role, &qq, &sign)
+	if name != "" {
+		err = stmt.QueryRow(name).Scan(&id, &name, &pwd, &role, &qq, &sign)
+	} else {
+		err = stmt.QueryRow(name).Scan(&id, &name, &pwd, &role, &qq, &sign)
+	}
+
+	defer stmt.Close()
+
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -78,8 +82,6 @@ func GetUser(name string, id int) (*def.User, error) {
 		return nil, nil
 	}
 	res := &def.User{Id: id, Pwd: pwd, Name: name, Role: role, QQ: qq, Desc: sign}
-
-	defer stmtOut.Close()
 
 	return res, nil
 }
@@ -90,7 +92,7 @@ func GetUsers(role string, page int, pageSize int) ([]*def.User, error) {
 	var query string
 	if role == "up" {
 		query += `NOT role = 'user'`
-	} else {
+	} else if len(role) < 6 {
 		query += fmt.Sprintf(`role = '%s'`, role)
 	}
 	rawSql := fmt.Sprintf(`SELECT id, name, role, qq, sign FROM users WHERE %s limit ?,?`, query)
