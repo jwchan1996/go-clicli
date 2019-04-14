@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"log"
 )
 
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
@@ -92,15 +91,15 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	tags := strings.Fields(tag)
 
 	var query string
-	if status != "" && status != "nowait" {
+	if status != "" && status != "nowait" && len(status) < 10 {
 		query = fmt.Sprintf(`AND posts.status ='%s'`, status)
 	}
 
-	if sort != "" && sort != "bgm" {
+	if sort != "" && sort != "bgm" && len(sort) < 10 {
 		query += fmt.Sprintf(`AND posts.sort ='%s'`, sort)
 	}
 
-	if uid != 0 {
+	if uid != 0 && len(string(uid)) < 6 {
 		query += fmt.Sprintf(`AND posts.uid ='%d'`, uid)
 	}
 
@@ -114,6 +113,9 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	if len(tags) != 0 {
 		query += `AND (1=2 `
 		for i := 0; i < len(tags); i++ {
+			if len(tags[i]) > 10 {
+				continue
+			}
 			key := string("%" + tags[i] + "%")
 			query += fmt.Sprintf(`OR posts.tag LIKE '%s'`, key)
 		}
@@ -123,16 +125,15 @@ func GetPosts(page int, pageSize int, status string, sort string, tag string, ui
 	sqlRaw := fmt.Sprintf(`SELECT posts.id,posts.title,posts.content,posts.status,posts.sort,posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id 
 WHERE 1=1 %s ORDER BY time DESC limit ?,?`, query)
 
-	stmtOut, err := dbConn.Prepare(sqlRaw)
-	if err != nil {
-		log.Printf("%s", err)
-	}
+	//fmt.Printf("%s", sqlRaw)
+
+	stmt, _ := dbConn.Prepare(sqlRaw)
+
+	var rows, _ = stmt.Query(start, pageSize)
+
+	defer stmt.Close()
 
 	var res []*def.Post
-
-	rows, err := stmtOut.Query(start, pageSize)
-
-	defer stmtOut.Close()
 
 	for rows.Next() {
 		var id, uid int
