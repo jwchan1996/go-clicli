@@ -4,8 +4,8 @@ import (
 	"log"
 	"github.com/132yse/acgzone-server/api/util"
 	"github.com/132yse/acgzone-server/api/def"
-	"database/sql"
 	"fmt"
+	"database/sql"
 )
 
 func CreateUser(name string, pwd string, role string, qq string, sign string) error {
@@ -62,7 +62,7 @@ func GetUser(name string, id int) (*def.User, error) {
 	if name != "" {
 		query += `SELECT id,name,pwd,role,qq,sign FROM users WHERE name = ?`
 	} else {
-		query += `SELECT id,name,pwd,role,qq,sign FROM users WHERE id = ？`
+		query += `SELECT id,name,pwd,role,qq,sign FROM users WHERE id = ?`
 	}
 	stmt, _ := dbConn.Prepare(query)
 
@@ -70,7 +70,7 @@ func GetUser(name string, id int) (*def.User, error) {
 	if name != "" {
 		err = stmt.QueryRow(name).Scan(&id, &name, &pwd, &role, &qq, &sign)
 	} else {
-		err = stmt.QueryRow(name).Scan(&id, &name, &pwd, &role, &qq, &sign)
+		err = stmt.QueryRow(id).Scan(&id, &name, &pwd, &role, &qq, &sign)
 	}
 
 	defer stmt.Close()
