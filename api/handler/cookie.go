@@ -21,11 +21,11 @@ func ReplaceCookie(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 
-	if resp, err := db.ReplaceCookie(cbody.Uid, cbody.Hcy, cbody.Tyyp, cbody.Bit); err != nil {
+	if resp, err := db.ReplaceCookie(cbody.Uid, cbody.Hcy); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
-		res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy, Tyyp: resp.Tyyp, Bit: resp.Bit}
+		res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy}
 		sendCookieResponse(w, res, 201)
 	}
 
