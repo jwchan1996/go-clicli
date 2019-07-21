@@ -12,6 +12,7 @@ import (
 	"log"
 	"time"
 	auth "github.com/nilslice/jwt"
+	"io"
 )
 
 const DOMAIN = "clicli.us"
@@ -55,20 +56,25 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	} else {
-		claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": resp.Level, "uid": resp.Id}
+		level := resp.Level
+		claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": level}
 		token, err := auth.New(claims)
 		if err != nil {
 			return
 		}
+
+		resStr, _ := json.Marshal(struct {
+			Token string `json:"token"`
+		}{Token: token})
+
 		t := http.Cookie{Name: "token", Value: token, Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &t)
-		log.Printf("%s", token)
 		qq := http.Cookie{Name: "uqq", Value: resp.QQ, Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &qq)
 		uid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &uid)
-		res := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, res, 201, "登陆成功啦！")
+
+		io.WriteString(w, string(resStr))
 	}
 
 }
@@ -136,11 +142,11 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Level := r.URL.Query().Get("Level")
+	level, _ := strconv.Atoi(r.URL.Query().Get("level"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
 
-	resp, err := db.GetUsers(Level, page, pageSize)
+	resp, err := db.GetUsers(level, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return

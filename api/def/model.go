@@ -1,13 +1,13 @@
 package def
 
 type User struct {
-	Id   int    `json:"id,omitempty"`
-	Name string `json:"name"`
-	Pwd  string `json:"pwd,omitempty"`
-	Role string `json:"role"`
-	QQ   string `json:"qq"`
-	Desc string `json:"desc"`
-	Level string `json:"level"`
+	Id    int    `json:"id,omitempty"`
+	Name  string `json:"name"`
+	Pwd   string `json:"pwd,omitempty"`
+	Role  string `json:"role"`
+	QQ    string `json:"qq"`
+	Desc  string `json:"desc"`
+	Level int    `json:"level"`
 }
 
 type Post struct {

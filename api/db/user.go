@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func CreateUser(name string, pwd string, level string, qq string, sign string) error {
+func CreateUser(name string, pwd string, level int, qq string, sign string) error {
 	pwd = util.Cipher(pwd)
 	stmtIns, err := dbConn.Prepare("INSERT INTO users (name,pwd,level,qq,sign) VALUES (?,?,?,?,?)")
 	if err != nil {
@@ -23,7 +23,7 @@ func CreateUser(name string, pwd string, level string, qq string, sign string) e
 	return nil
 }
 
-func UpdateUser(id int, name string, pwd string, level string, qq string, sign string) (*def.User, error) {
+func UpdateUser(id int, name string, pwd string, level int, qq string, sign string) (*def.User, error) {
 	if pwd == "" {
 		stmtIns, err := dbConn.Prepare("UPDATE users SET name=?,level=?,qq=?,sign=? WHERE id =?")
 		if err != nil {
@@ -65,8 +65,8 @@ func GetUser(name string, id int) (*def.User, error) {
 		query += `SELECT id,name,pwd,level,qq,sign FROM users WHERE id = ?`
 	}
 	stmt, _ := dbConn.Prepare(query)
-
-	var pwd, level, sign, qq string
+	var level int
+	var pwd, sign, qq string
 	if name != "" {
 		err = stmt.QueryRow(name).Scan(&id, &name, &pwd, &level, &qq, &sign)
 	} else {
@@ -86,14 +86,14 @@ func GetUser(name string, id int) (*def.User, error) {
 	return res, nil
 }
 
-func GetUsers(level string, page int, pageSize int) ([]*def.User, error) {
+func GetUsers(level int, page int, pageSize int) ([]*def.User, error) {
 	start := pageSize * (page - 1)
 
 	var query string
-	if level == "up" {
+	if level > 4 {
 		query += `NOT level = 'user'`
-	} else if len(level) < 6 {
-		query += fmt.Sprintf(`level = '%s'`, level)
+	} else if level > 0 {
+		query += fmt.Sprintf(`level = '%s'`, string(level))
 	}
 	rawSql := fmt.Sprintf(`SELECT id, name, level, qq, sign FROM users WHERE %s limit ?,?`, query)
 	stmtOut, err := dbConn.Prepare(rawSql)
@@ -106,8 +106,8 @@ func GetUsers(level string, page int, pageSize int) ([]*def.User, error) {
 	}
 
 	for rows.Next() {
-		var id int
-		var name, level, sign, qq string
+		var id, level int
+		var name, sign, qq string
 		if err := rows.Scan(&id, &name, &level, &qq, &sign); err != nil {
 			return res, err
 		}
@@ -133,8 +133,8 @@ func SearchUsers(key string) ([]*def.User, error) {
 	}
 
 	for rows.Next() {
-		var id int
-		var name, level, sign, qq string
+		var id, level int
+		var name, sign, qq string
 		if err := rows.Scan(&id, &name, &level, &qq, &sign); err != nil {
 			return res, err
 		}
