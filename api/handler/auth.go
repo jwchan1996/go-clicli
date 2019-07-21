@@ -28,3 +28,16 @@ func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	io.WriteString(w, string(resStr))
 }
+
+func AuthToken(w http.ResponseWriter, r *http.Request, level int) {
+	token := r.Header.Get("token")
+	if auth.Passes(token) {
+		s := auth.GetClaims(token)
+		if int(s["level"].(float64)) < level {
+			io.WriteString(w, string("权限不足"))
+		}
+	} else {
+		io.WriteString(w, string("token无效或过期"))
+	}
+
+}
