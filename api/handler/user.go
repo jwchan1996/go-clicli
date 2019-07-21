@@ -95,25 +95,23 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
 		return
 	}
 
-	res, _ := db.GetUser("", pint)
-	if res.Name != ubody.Name || res.Id == pint {
-		if resp, err := db.UpdateUser(pint, res.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
-			sendErrorResponse(w, def.ErrorDB)
-			return
-		} else {
-			ret := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
-			sendUserResponse(w, ret, 201, "更新成功啦")
-		}
-	} else {
+	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
 		sendErrorResponse(w, def.ErrorUserNameRepeated)
 		return
 	}
 
+	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
+		sendErrorResponse(w, def.ErrorDB)
+		return
+	} else {
+		ret := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
+		sendUserResponse(w, ret, 201, "更新成功啦")
+	}
 }
+
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	AuthToken(w, r, 4)
