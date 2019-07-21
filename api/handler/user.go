@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"strconv"
 	"log"
+	auth "github.com/nilslice/jwt"
+	"fmt"
 )
 
 const DOMAIN = "clicli.us"
@@ -110,7 +112,18 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w, r)
+	const level = 2
+	token := r.Header.Get("token")
+
+	if auth.Passes(token) {
+		s := auth.GetClaims(token)
+		if int(s["level"].(float64)) < level {
+			return
+		}
+	} else {
+		fmt.Println("no")
+	}
+
 	uname := r.URL.Query().Get("uname")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	resp, err := db.GetUser(uname, uid)
@@ -125,7 +138,6 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w, r)
 	role := r.URL.Query().Get("role")
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
@@ -141,7 +153,6 @@ func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func SearchUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w, r)
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchUsers(key)

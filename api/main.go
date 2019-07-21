@@ -4,6 +4,8 @@ import (
 	"github.com/132yse/acgzone-server/api/handler"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"strings"
+	"log"
 )
 
 type middleWareHandler struct {
@@ -16,7 +18,14 @@ func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
 	return m
 }
 func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	//鉴权逻辑
+	//校验token
+	userToken := strings.Split(r.Header.Get("Authorization"), " ")
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
+	w.Header().Add("Access-Control-Allow-Credentials", "true")
+	w.Header().Add("Access-Control-Max-Age", "3600")
+	w.Header().Add("Access-Control-Allow-Headers", "x-requested-with")
+	log.Printf("%s", userToken)
 	m.r.ServeHTTP(w, r)
 }
 
@@ -52,6 +61,6 @@ func RegisterHandler() *httprouter.Router {
 }
 func main() {
 	r := RegisterHandler()
-	//mh := NewMiddleWareHandler(r)
-	http.ListenAndServe(":4000", r)
+	mh := NewMiddleWareHandler(r)
+	http.ListenAndServe(":4000", mh)
 }

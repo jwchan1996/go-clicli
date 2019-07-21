@@ -16,20 +16,15 @@ func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if err != nil {
 		return
 	}
-	w.Header().Add("Authorization", "Bearer "+token)
+	//eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImV4cCI6MTU2Mzc4ODIwNiwiaWF0IjpudWxsLCJpc3MiOm51bGwsImp0aSI6bnVsbCwibGV2ZWwiOjEsIm5iZiI6bnVsbCwic3ViIjpudWxsfQ.aivx_tzi2SygsQM_RztVnxv76_470vxoScvD5nwtQoc
+	//w.Header().Add("Authorization", "Bearer "+token)
+	//w.WriteHeader(http.StatusOK)
 
-	w.WriteHeader(http.StatusOK)
+	t := http.Cookie{Name: "token", Value: token, Path: "/", MaxAge: 86400, Domain: DOMAIN}
+	http.SetCookie(w, &t)
 	resStr, _ := json.Marshal(struct {
 		Token string `json:"token"`
 	}{Token: token})
 
 	io.WriteString(w, string(resStr))
-}
-
-func Cross(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
-	w.Header().Add("Access-Control-Allow-Credentials", "true")
-	w.Header().Add("Access-Control-Max-Age", "3600")
-	w.Header().Add("Access-Control-Allow-Headers", "x-requested-with")
 }

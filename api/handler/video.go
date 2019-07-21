@@ -51,7 +51,6 @@ func UpdateVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func GetVideos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w,r)
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
@@ -67,7 +66,6 @@ func GetVideos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	Cross(w,r)
 	vid, _ := strconv.Atoi(p.ByName("id"))
 	resp, err := db.GetVideo(vid)
 	if err != nil {
