@@ -11,7 +11,9 @@ import (
 )
 
 func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	AuthToken( w, r,2)
+	if !AuthToken(w, r, 2) {
+		return
+	}
 	req, _ := ioutil.ReadAll(r.Body)
 	body := &def.Video{}
 
@@ -31,7 +33,9 @@ func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func UpdateVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	AuthToken( w, r,2)
+	if !AuthToken(w, r, 2) {
+		return
+	}
 	id := p.ByName("id")
 	vid, _ := strconv.Atoi(id)
 	req, _ := ioutil.ReadAll(r.Body)
@@ -80,7 +84,9 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func DeleteVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	AuthToken( w, r,3)
+	if !AuthToken(w, r, 3) {
+		return
+	}
 	id, _ := strconv.Atoi(r.URL.Query().Get("id"))
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 

@@ -73,6 +73,8 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.SetCookie(w, &qq)
 		uid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &uid)
+		l := http.Cookie{Name: "level", Value: strconv.Itoa(resp.Level), Path: "/", MaxAge: 86400, Domain: DOMAIN}
+		http.SetCookie(w, &l)
 
 		io.WriteString(w, string(resStr))
 	}
@@ -88,7 +90,9 @@ func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	AuthToken(w, r, 0)
+	if !AuthToken(w, r, 1) {
+		return
+	}
 	pint, _ := strconv.Atoi(p.ByName("id"))
 
 	req, _ := ioutil.ReadAll(r.Body)
@@ -114,7 +118,9 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	AuthToken(w, r, 4)
+	if !AuthToken(w, r, 4) {
+		return
+	}
 	uid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeleteUser(uid)
 	if err != nil {
