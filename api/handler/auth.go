@@ -1,55 +1,29 @@
 package handler
 
 import (
-	"encoding/base64"
-	"github.com/132yse/acgzone-server/api/db"
-	"github.com/132yse/acgzone-server/api/def"
-	"github.com/julienschmidt/httprouter"
-	"github.com/132yse/acgzone-server/api/util"
+	auth "github.com/nilslice/jwt"
 	"net/http"
-	"strconv"
+	"time"
+	"encoding/json"
+	"io"
+	"github.com/julienschmidt/httprouter"
 )
 
 //登陆校验，只负责校验登陆与否
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	Cross(w, r)
-	uid, err := r.Cookie("uid")
-	if err != nil || uid == nil {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
+	claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": 1}
+	token, err := auth.New(claims)
+	if err != nil {
 		return
 	}
-	id, _ := strconv.Atoi(uid.Value)
-	resp, err := db.GetUser("", id)
-	if err != nil {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return
-	}
+	w.Header().Add("Authorization", "Bearer "+token)
 
-	res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
-	sendUserResponse(w, res, 201, "")
-}
+	w.WriteHeader(http.StatusOK)
+	resStr, _ := json.Marshal(struct {
+		Token string `json:"token"`
+	}{Token: token})
 
-//鉴权校验，负责判断是否具有编辑和审核权限
-func RightAuth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) string {
-	uname, _ := r.Cookie("uname")
-	name, _ := base64.StdEncoding.DecodeString(uname.Value)
-
-	resp, err := db.GetUser(string(name), 0)
-	if err != nil {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
-		return ""
-	}
-	token, _ := r.Cookie("token")                      //从 cookie 里取 token
-	newToken := util.CreateToken(resp.Name, resp.Role) //服务端生成新的 token
-
-	if token.Value == newToken { //已经登陆
-		if resp.Role == "admin" || resp.Role == "editor" {
-			return resp.Role
-		}
-	} else {
-		return ""
-	}
-	return ""
+	io.WriteString(w, string(resStr))
 }
 
 func Cross(w http.ResponseWriter, r *http.Request) {
