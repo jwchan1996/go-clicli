@@ -88,7 +88,7 @@ func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	AuthToken(w, r, 4)
+	AuthToken(w, r, 0)
 	pint, _ := strconv.Atoi(p.ByName("id"))
 
 	req, _ := ioutil.ReadAll(r.Body)
@@ -101,7 +101,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	res, _ := db.GetUser("", pint)
 	if res.Name != ubody.Name || res.Id == pint {
-		if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
+		if resp, err := db.UpdateUser(pint, res.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
 			sendErrorResponse(w, def.ErrorDB)
 			return
 		} else {
