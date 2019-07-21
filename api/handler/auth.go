@@ -3,24 +3,28 @@ package handler
 import (
 	auth "github.com/nilslice/jwt"
 	"net/http"
-	"time"
 	"encoding/json"
 	"io"
 	"github.com/julienschmidt/httprouter"
 )
 
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": 4}
-	token, err := auth.New(claims)
+	t, err := r.Cookie("token")
 	if err != nil {
+		resStr, _ := json.Marshal(struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{Code: 401, Msg: "鉴权失败，请重新登陆"})
+
+		io.WriteString(w, string(resStr))
 		return
+	} else {
+		token := t.Value
+		resStr, _ := json.Marshal(struct {
+			Token string `json:"token"`
+		}{Token: token})
+		io.WriteString(w, string(resStr))
 	}
-
-	resStr, _ := json.Marshal(struct {
-		Token string `json:"token"`
-	}{Token: token})
-
-	io.WriteString(w, string(resStr))
 }
 
 func AuthToken(w http.ResponseWriter, r *http.Request, level int) {
