@@ -102,9 +102,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
-		sendErrorResponse(w, def.ErrorUserNameRepeated)
-		return
+	old, _ := db.GetUser("", pint)
+	if old.Name != ubody.Name {
+		if res, _ := db.GetUser(ubody.Name, 0); res != nil {
+			sendErrorResponse(w, def.ErrorUserNameRepeated)
+			return
+		}
 	}
 
 	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
@@ -115,7 +118,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendUserResponse(w, ret, 201, "更新成功啦")
 	}
 }
-
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	if !AuthToken(w, r, 4) {
