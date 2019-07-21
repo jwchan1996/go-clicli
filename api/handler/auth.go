@@ -10,7 +10,7 @@ import (
 )
 
 func Auth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": 1}
+	claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": 4}
 	token, err := auth.New(claims)
 	if err != nil {
 		return
@@ -29,9 +29,11 @@ func AuthToken(w http.ResponseWriter, r *http.Request, level int) {
 		s := auth.GetClaims(token)
 		if int(s["level"].(float64)) < level {
 			io.WriteString(w, string("权限不足"))
+			return
 		}
 	} else {
 		io.WriteString(w, string("token无效或过期"))
+		return
 	}
 
 }

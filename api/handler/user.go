@@ -30,7 +30,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if err := db.CreateUser(ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
+	if err := db.CreateUser(ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return
 	} else {
@@ -55,18 +55,19 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	} else {
-		claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": 1}
+		claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": resp.Level, "uid": resp.Id}
 		token, err := auth.New(claims)
 		if err != nil {
 			return
 		}
 		t := http.Cookie{Name: "token", Value: token, Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &t)
+		log.Printf("%s", token)
 		qq := http.Cookie{Name: "uqq", Value: resp.QQ, Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &qq)
 		uid := http.Cookie{Name: "uid", Value: strconv.Itoa(resp.Id), Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &uid)
-		res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+		res := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
 		sendUserResponse(w, res, 201, "登陆成功啦！")
 	}
 
@@ -94,11 +95,11 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	res, _ := db.GetUser("", pint)
 	if res.Name != ubody.Name || res.Id == pint {
-		if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Role, ubody.QQ, ubody.Desc); err != nil {
+		if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
 			sendErrorResponse(w, def.ErrorDB)
 			return
 		} else {
-			ret := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+			ret := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
 			sendUserResponse(w, ret, 201, "更新成功啦")
 		}
 	} else {
@@ -129,17 +130,17 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendErrorResponse(w, def.ErrorNotAuthUser)
 		return
 	}
-	res := &def.User{Id: resp.Id, Name: resp.Name, Role: resp.Role, QQ: resp.QQ, Desc: resp.Desc}
+	res := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
 	sendUserResponse(w, res, 201, "")
 
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	role := r.URL.Query().Get("role")
+	Level := r.URL.Query().Get("Level")
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
 
-	resp, err := db.GetUsers(role, page, pageSize)
+	resp, err := db.GetUsers(Level, page, pageSize)
 	if err != nil {
 		sendErrorResponse(w, def.ErrorDB)
 		return

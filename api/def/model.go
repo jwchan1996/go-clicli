@@ -7,6 +7,7 @@ type User struct {
 	Role string `json:"role"`
 	QQ   string `json:"qq"`
 	Desc string `json:"desc"`
+	Level string `json:"level"`
 }
 
 type Post struct {
