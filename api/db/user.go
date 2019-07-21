@@ -90,10 +90,10 @@ func GetUsers(level int, page int, pageSize int) ([]*def.User, error) {
 	start := pageSize * (page - 1)
 
 	var query string
-	if level > 4 {
-		query += `NOT level = 'user'`
-	} else if level > 0 {
-		query += fmt.Sprintf(`level = '%s'`, string(level))
+	if level == 5 {
+		query += `NOT level = 1`
+	} else if level > 0 && level < 5 {
+		query += fmt.Sprintf(`level = '%v'`, level)
 	}
 	rawSql := fmt.Sprintf(`SELECT id, name, level, qq, sign FROM users WHERE %s limit ?,?`, query)
 	stmtOut, err := dbConn.Prepare(rawSql)
