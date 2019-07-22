@@ -1,6 +1,8 @@
 # go-clicli
 c站后端，golang 技术栈
 
+[clicli.us](https://www.clicli.us)
+
 ### 依赖
 * httprouter
 * fasthttp
@@ -12,5 +14,3 @@ c站后端，golang 技术栈
 * 原生 sql 操作，包含外键关联、分页、模糊搜索
 * 简单的 jwt 和数值鉴权
 
-#### p.s.
-数据库
