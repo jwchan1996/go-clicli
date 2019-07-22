@@ -1,25 +1,16 @@
-# acgzone-server
-和谐区的后端重构，语言从 node 换 golang
+# go-clicli
+c站后端，golang 技术栈
 
 ### 依赖
 * httprouter
 * fasthttp
 * go-sql-driver
-
-### TO DO……
-* 争取重构所有 api ，但是无法移除 koa ，koa 将会作为中间层只负责 ssr
-* 数据库 mongoDB 换 mysql
-* 争取抽象出一个 go web 框架
+* jwt
 
 ### 特征
-* 用户、文章的增删改查
+* 用户、番剧的增删改查
 * 原生 sql 操作，包含外键关联、分页、模糊搜索
-* 简单的鉴权和简单的调度
-* go 原生的小技巧
+* 简单的 jwt 和数值鉴权
 
 #### p.s.
-这是一次充满勇气的决定，经过这一波，会抽出更多的最佳实践
-
-但是同时增加了我个人的维护成本，我需要同时维护前端（vue、react）、node中间层（koa）、后端（go）
-
-但是这不是我没事找事，我也是经过很久的思想斗争的::>_<::
+数据库

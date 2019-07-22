@@ -4,7 +4,6 @@ type User struct {
 	Id    int    `json:"id,omitempty"`
 	Name  string `json:"name"`
 	Pwd   string `json:"pwd,omitempty"`
-	Role  string `json:"role"`
 	QQ    string `json:"qq"`
 	Desc  string `json:"desc"`
 	Level int    `json:"level"`
@@ -65,9 +64,4 @@ type Comments struct {
 
 type Videos struct {
 	Videos []*Video `json:"videos"`
-}
-
-type Token struct {
-	Name string
-	Pwd  string
 }
