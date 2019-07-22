@@ -101,6 +101,7 @@ func sendCookieResponse(w http.ResponseWriter, cRes def.Cookie, sc int) {
 }
 
 func sendMsg(w http.ResponseWriter, code int, msg string) {
+	w.WriteHeader(code)
 	resStr, _ := json.Marshal(struct {
 		Code int    `json:"code"`
 		Msg  string `json:"msg"`
