@@ -32,12 +32,12 @@ func AuthToken(w http.ResponseWriter, r *http.Request, level int) bool {
 	if auth.Passes(token) {
 		s := auth.GetClaims(token)
 		if int(s["level"].(float64)) < level {
-			io.WriteString(w, string("权限不足"))
+			sendMsg(w, 401, "权限不足")
 			return false
 		}
 		return true
 	} else {
-		io.WriteString(w, string("token无效或过期"))
+		sendMsg(w, 401, "token过期或无效")
 		return false
 	}
 

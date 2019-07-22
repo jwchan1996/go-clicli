@@ -17,17 +17,17 @@ func AddComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	cbody := &def.Comment{}
 
 	if err := json.Unmarshal(req, cbody); err != nil {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		sendMsg(w,401,"参数解析失败")
 		return
 	}
 
 	if resp, err := db.AddComment(cbody.Content, cbody.Pid, cbody.Uid, cbody.Tuid, cbody.Vid, cbody.Time, cbody.Color); err != nil {
 		log.Printf("%s", err)
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
 		res := def.Comment{Id: resp.Id, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Uid: resp.Uid}
-		sendCommentResponse(w, res, 201)
+		sendCommentResponse(w, res, 200)
 	}
 
 }
@@ -40,12 +40,12 @@ func GetComments(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
 	resp, err := db.GetComments(pid, uid, vid, page, pageSize)
 	if err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		log.Printf("%s", err)
 		return
 	} else {
 		res := &def.Comments{Comments: resp}
-		sendCommentsResponse(w, res, 201)
+		sendCommentsResponse(w, res, 200)
 	}
 }
 
@@ -55,9 +55,9 @@ func DeleteComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 	pid, _ := strconv.Atoi(r.URL.Query().Get("pid"))
 	err := db.DeleteComment(id, pid)
 	if err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		sendErrorResponse(w, def.Success)
+		sendMsg(w,200,"删除成功")
 	}
 }

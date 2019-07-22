@@ -22,20 +22,20 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		sendMsg(w,401,"参数解析失败")
 		return
 	}
 
 	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
-		sendErrorResponse(w, def.ErrorUserNameRepeated)
+		sendMsg(w,401,"用户名已存在")
 		return
 	}
 
 	if err := db.CreateUser(ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		sendErrorResponse(w, def.Success)
+		sendMsg(w,200,"注册成功啦")
 	}
 
 }
@@ -45,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
-		sendErrorResponse(w, def.ErrorRequestBodyParseFailed)
+		sendMsg(w,401,"参数解析失败")
 		return
 	}
 
@@ -53,7 +53,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	pwd := util.Cipher(ubody.Pwd)
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
-		sendErrorResponse(w, def.ErrorNotAuthUser)
+		sendMsg(w,401,"用户名或密码错误")
 		return
 	} else {
 		level := resp.Level
@@ -82,40 +82,44 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
-	cookieId := http.Cookie{Name: "uid", Path: "/", Domain: DOMAIN, MaxAge: -1}
-	cookieQq := http.Cookie{Name: "uqq", Path: "/", Domain: DOMAIN, MaxAge: -1}
-	http.SetCookie(w, &cookieId)
-	http.SetCookie(w, &cookieQq)
-	sendErrorResponse(w, def.Success)
+	i := http.Cookie{Name: "uid", Path: "/", Domain: DOMAIN, MaxAge: -1}
+	q := http.Cookie{Name: "uqq", Path: "/", Domain: DOMAIN, MaxAge: -1}
+	l := http.Cookie{Name: "level", Path: "/", Domain: DOMAIN, MaxAge: -1}
+	t := http.Cookie{Name: "token", Path: "/", Domain: DOMAIN, MaxAge: -1}
+	http.SetCookie(w, &i)
+	http.SetCookie(w, &q)
+	http.SetCookie(w, &t)
+	http.SetCookie(w, &l)
+	sendMsg(w,200,"退出成功啦")
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !AuthToken(w, r, 1) {
-		return
-	}
 	pint, _ := strconv.Atoi(p.ByName("id"))
-
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.User{}
-
 	if err := json.Unmarshal(req, ubody); err != nil {
+		sendMsg(w,200,"参数解析失败")
 		return
 	}
 
 	old, _ := db.GetUser("", pint)
+
+	if !AuthToken(w, r, old.Level) {
+		return
+	}
 	if old.Name != ubody.Name {
 		if res, _ := db.GetUser(ubody.Name, 0); res != nil {
-			sendErrorResponse(w, def.ErrorUserNameRepeated)
+			sendMsg(w,401,"用户名已存在~")
 			return
 		}
 	}
 
 	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
 		ret := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
-		sendUserResponse(w, ret, 201, "更新成功啦")
+		sendUserResponse(w, ret, 200, "更新成功啦")
 	}
 }
 
@@ -126,10 +130,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeleteUser(uid)
 	if err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		sendErrorResponse(w, def.Success)
+		sendMsg(w,200,"删除成功")
 	}
 }
 
@@ -139,11 +143,11 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	resp, err := db.GetUser(uname, uid)
 	if err != nil {
 		log.Printf("%s", err)
-		sendErrorResponse(w, def.ErrorNotAuthUser)
+		sendMsg(w,401,"数据库错误")
 		return
 	}
 	res := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
-	sendUserResponse(w, res, 201, "")
+	sendUserResponse(w, res, 200, "")
 
 }
 
@@ -154,11 +158,11 @@ func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	resp, err := db.GetUsers(level, page, pageSize)
 	if err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
 		res := &def.Users{Users: resp}
-		sendUsersResponse(w, res, 201)
+		sendUsersResponse(w, res, 200)
 	}
 }
 
@@ -167,10 +171,10 @@ func SearchUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	resp, err := db.SearchUsers(key)
 	if err != nil {
-		sendErrorResponse(w, def.ErrorDB)
+		sendMsg(w,401,"数据库错误")
 		return
 	} else {
 		res := &def.Users{Users: resp}
-		sendUsersResponse(w, res, 201)
+		sendUsersResponse(w, res, 200)
 	}
 }

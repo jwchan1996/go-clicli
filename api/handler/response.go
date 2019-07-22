@@ -7,11 +7,6 @@ import (
 	"net/http"
 )
 
-func sendErrorResponse(w http.ResponseWriter, errRes def.ErrorResponse) {
-	resStr, _ := json.Marshal(&errRes)
-	io.WriteString(w, string(resStr))
-}
-
 func sendUserResponse(w http.ResponseWriter, uRes *def.User, sc int, msg string) {
 	w.WriteHeader(sc)
 
@@ -101,6 +96,15 @@ func sendCookieResponse(w http.ResponseWriter, cRes def.Cookie, sc int) {
 		Code   int        `json:"code"`
 		Result def.Cookie `json:"result"`
 	}{sc, cRes})
+
+	io.WriteString(w, string(resStr))
+}
+
+func sendMsg(w http.ResponseWriter, code int, msg string) {
+	resStr, _ := json.Marshal(struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{Code: code, Msg: msg})
 
 	io.WriteString(w, string(resStr))
 }
