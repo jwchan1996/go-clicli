@@ -105,7 +105,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	old, _ := db.GetUser("", pint) //被修改的用户
+	old, _ := db.GetUser("", pint)
 
 	if old.Name != ubody.Name {
 		if res, _ := db.GetUser(ubody.Name, 0); res != nil {
@@ -128,11 +128,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 				realLevel = old.Level
 			}
 		}
-		return
 	} else {
 		sendMsg(w, 401, "token过期或无效")
 		return
 	}
+
+	log.Printf("%v",realLevel)
 
 	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, realLevel, ubody.QQ, ubody.Desc); err != nil {
 		sendMsg(w, 401, "数据库错误")
