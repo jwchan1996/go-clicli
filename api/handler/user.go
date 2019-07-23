@@ -22,20 +22,20 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
-		sendMsg(w,401,"参数解析失败")
+		sendMsg(w, 401, "参数解析失败")
 		return
 	}
 
 	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
-		sendMsg(w,401,"用户名已存在")
+		sendMsg(w, 401, "用户名已存在")
 		return
 	}
 
 	if err := db.CreateUser(ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
-		sendMsg(w,401,"数据库错误")
+		sendMsg(w, 401, "数据库错误")
 		return
 	} else {
-		sendMsg(w,200,"注册成功啦")
+		sendMsg(w, 200, "注册成功啦")
 	}
 
 }
@@ -45,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ubody := &def.User{}
 
 	if err := json.Unmarshal(req, ubody); err != nil {
-		sendMsg(w,401,"参数解析失败")
+		sendMsg(w, 401, "参数解析失败")
 		return
 	}
 
@@ -53,19 +53,22 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	pwd := util.Cipher(ubody.Pwd)
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
-		sendMsg(w,401,"用户名或密码错误")
+		sendMsg(w, 401, "用户名或密码错误")
 		return
 	} else {
 		level := resp.Level
-		claims := map[string]interface{}{"exp": time.Now().Add(time.Hour * 24).Unix(), "level": level}
+		claims := map[string]interface{}{"exp": time.Now().Add(time.Hour).Unix(), "level": level}
 		token, err := auth.New(claims)
 		if err != nil {
 			return
 		}
 
+		res := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
 		resStr, _ := json.Marshal(struct {
-			Token string `json:"token"`
-		}{Token: token})
+			Code  int       `json:"code"`
+			Token string    `json:"token"`
+			User  *def.User `json:"user"`
+		}{Code: 200, Token: token, User: res})
 
 		t := http.Cookie{Name: "token", Value: token, Path: "/", MaxAge: 86400, Domain: DOMAIN}
 		http.SetCookie(w, &t)
@@ -90,7 +93,7 @@ func Logout(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	http.SetCookie(w, &q)
 	http.SetCookie(w, &t)
 	http.SetCookie(w, &l)
-	sendMsg(w,200,"退出成功啦")
+	sendMsg(w, 200, "退出成功啦")
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -98,24 +101,41 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
 	ubody := &def.User{}
 	if err := json.Unmarshal(req, ubody); err != nil {
-		sendMsg(w,200,"参数解析失败")
+		sendMsg(w, 200, "参数解析失败")
 		return
 	}
 
-	old, _ := db.GetUser("", pint)
+	old, _ := db.GetUser("", pint) //被修改的用户
 
-	if !AuthToken(w, r, old.Level) {
-		return
-	}
 	if old.Name != ubody.Name {
 		if res, _ := db.GetUser(ubody.Name, 0); res != nil {
-			sendMsg(w,401,"用户名已存在~")
+			sendMsg(w, 401, "用户名已存在~")
 			return
 		}
 	}
+	var realLevel int
+	token := r.Header.Get("token")
+	if auth.Passes(token) {
+		s := auth.GetClaims(token)
+		l := int(s["level"].(float64))
+		if l < old.Level {
+			sendMsg(w, 401, "权限不足")
+			return
+		} else {
+			if l == 4 {
+				realLevel = ubody.Level
+			} else {
+				realLevel = old.Level
+			}
+		}
+		return
+	} else {
+		sendMsg(w, 401, "token过期或无效")
+		return
+	}
 
-	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, ubody.Level, ubody.QQ, ubody.Desc); err != nil {
-		sendMsg(w,401,"数据库错误")
+	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, realLevel, ubody.QQ, ubody.Desc); err != nil {
+		sendMsg(w, 401, "数据库错误")
 		return
 	} else {
 		ret := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
@@ -130,10 +150,10 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uid, _ := strconv.Atoi(p.ByName("id"))
 	err := db.DeleteUser(uid)
 	if err != nil {
-		sendMsg(w,401,"数据库错误")
+		sendMsg(w, 401, "数据库错误")
 		return
 	} else {
-		sendMsg(w,200,"删除成功")
+		sendMsg(w, 200, "删除成功")
 	}
 }
 
@@ -143,7 +163,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	resp, err := db.GetUser(uname, uid)
 	if err != nil {
 		log.Printf("%s", err)
-		sendMsg(w,401,"数据库错误")
+		sendMsg(w, 401, "数据库错误")
 		return
 	}
 	res := &def.User{Id: resp.Id, Name: resp.Name, Level: resp.Level, QQ: resp.QQ, Desc: resp.Desc}
@@ -158,7 +178,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	resp, err := db.GetUsers(level, page, pageSize)
 	if err != nil {
-		sendMsg(w,401,"数据库错误")
+		sendMsg(w, 401, "数据库错误")
 		return
 	} else {
 		res := &def.Users{Users: resp}
@@ -171,7 +191,7 @@ func SearchUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	resp, err := db.SearchUsers(key)
 	if err != nil {
-		sendMsg(w,401,"数据库错误")
+		sendMsg(w, 401, "数据库错误")
 		return
 	} else {
 		res := &def.Users{Users: resp}
