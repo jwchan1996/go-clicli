@@ -12,9 +12,6 @@ import (
 )
 
 func AddComment(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	if !AuthToken(w, r, 1) {
-		return
-	}
 	req, _ := ioutil.ReadAll(r.Body)
 	cbody := &def.Comment{}
 
