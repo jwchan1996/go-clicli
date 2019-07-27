@@ -28,7 +28,7 @@ func GetCookie(uid int) (*def.Cookie, error) {
 	}
 
 	var hcy string
-	err = stmtOut.QueryRow(uid).Scan(&uid)
+	err = stmtOut.QueryRow(uid).Scan(&uid,&hcy)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
