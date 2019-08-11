@@ -9,5 +9,5 @@ type Count struct {
 type Cookie struct {
 	Uid  int    `json:"uid"`
 	Hcy  string `json:"hcy"`
-	Quqi string `json:"quqi"`
+	Quqi string `json:"quqi,omitempty"`
 }

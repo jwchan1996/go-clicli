@@ -26,7 +26,7 @@ func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	if res, _ := db.GetUser(ubody.Name, 0); res != nil {
+	if res, _ := db.GetUser(ubody.Name, 0,""); res != nil {
 		sendMsg(w, 401, "用户名已存在")
 		return
 	}
@@ -49,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	resp, err := db.GetUser(ubody.Name, 0)
+	resp, err := db.GetUser(ubody.Name, 0,"")
 	pwd := util.Cipher(ubody.Pwd)
 
 	if err != nil || len(resp.Pwd) == 0 || pwd != resp.Pwd {
@@ -105,10 +105,10 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		return
 	}
 
-	old, _ := db.GetUser("", pint)
+	old, _ := db.GetUser("", pint,"")
 
 	if old.Name != ubody.Name {
-		if res, _ := db.GetUser(ubody.Name, 0); res != nil {
+		if res, _ := db.GetUser(ubody.Name, 0,""); res != nil {
 			sendMsg(w, 401, "用户名已存在~")
 			return
 		}
@@ -132,8 +132,6 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w, 401, "token过期或无效")
 		return
 	}
-
-	log.Printf("%v",realLevel)
 
 	if resp, err := db.UpdateUser(pint, ubody.Name, ubody.Pwd, realLevel, ubody.QQ, ubody.Desc); err != nil {
 		sendMsg(w, 401, "数据库错误")
@@ -160,8 +158,9 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	uname := r.URL.Query().Get("uname")
+	uqq := r.URL.Query().Get("uqq")
 	uid, _ := strconv.Atoi(r.URL.Query().Get("uid"))
-	resp, err := db.GetUser(uname, uid)
+	resp, err := db.GetUser(uname, uid, uqq)
 	if err != nil {
 		log.Printf("%s", err)
 		sendMsg(w, 401, "数据库错误")
