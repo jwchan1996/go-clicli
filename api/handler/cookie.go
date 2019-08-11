@@ -21,11 +21,11 @@ func ReplaceCookie(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		return
 	}
 
-	if resp, err := db.ReplaceCookie(cbody.Uid, cbody.Hcy); err != nil {
+	if resp, err := db.ReplaceCookie(cbody.Uid, cbody.Hcy,cbody.Quqi); err != nil {
 		sendMsg(w, 401, "数据库错误")
 		return
 	} else {
-		res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy}
+		res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy,Quqi:resp.Quqi}
 		sendCookieResponse(w, res, 200)
 	}
 
@@ -39,7 +39,7 @@ func GetCookie(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		log.Printf("%v", err)
 		return
 	}
-	res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy}
+	res := def.Cookie{Uid: resp.Uid, Hcy: resp.Hcy,Quqi:resp.Quqi}
 	sendCookieResponse(w, res, 200)
 
 }
