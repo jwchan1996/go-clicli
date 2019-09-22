@@ -28,7 +28,7 @@ func GetVideos(pid int, uid int, page int, pageSize int) ([]*def.Video, error) {
 	start := pageSize * (page - 1)
 
 	stmtOut, err := dbConn.Prepare(`SELECT videos.id,videos.oid,videos.title,videos.content,videos.time,videos.pid,users.id,users.name,users.qq FROM videos INNER JOIN users ON videos.uid = users.id 
-WHERE videos.pid=? OR videos.uid =? ORDER BY oid limit ?,?`)
+WHERE videos.pid=? OR videos.uid =? ORDER BY oid,uid limit ?,?`)
 
 	if err != nil {
 		return nil, err
