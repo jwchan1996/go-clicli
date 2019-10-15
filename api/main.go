@@ -51,6 +51,7 @@ func RegisterHandler() *httprouter.Router {
 	router.GET("/auth", handler.Auth)
 	router.POST("/cookie/replace", handler.ReplaceCookie)
 	router.GET("/cookie/:uid", handler.GetCookie)
+	router.GET("/rank", handler.GetRank)
 
 	return router
 }

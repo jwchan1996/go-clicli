@@ -16,9 +16,6 @@ func GetCommentCount(pid int) (*def.Count, error) {
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
 
 	res := &def.Count{Pid: pid, Pv: pv, Cv: cv}
 

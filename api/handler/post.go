@@ -101,10 +101,25 @@ func GetPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
+
 func SearchPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	key := r.URL.Query().Get("key")
 
 	resp, err := db.SearchPosts(key)
+	if err != nil {
+		sendMsg(w,401,"数据库错误")
+		log.Printf("%s", err)
+		return
+	} else {
+		res := &def.Posts{Posts: resp}
+		sendPostsResponse(w, res, 200)
+	}
+
+}
+
+func GetRank(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
+	resp, err := db.GetRank()
 	if err != nil {
 		sendMsg(w,401,"数据库错误")
 		log.Printf("%s", err)

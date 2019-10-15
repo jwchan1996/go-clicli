@@ -177,3 +177,29 @@ func SearchPosts(key string) ([]*def.Post, error) {
 
 	return res, nil
 }
+func GetRank() ([]*def.Post, error) {
+	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag,posts.time FROM posts LEFT JOIN pv ON posts.id = pv.pid ORDER BY pv DESC limit 1,20")
+
+	var res []*def.Post
+
+	rows, err := stmtOut.Query()
+	if err != nil {
+		return res, err
+	}
+
+	defer stmtOut.Close()
+
+	for rows.Next() {
+		var id int
+		var title, content, status, sort, tag, ctime string
+		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime); err != nil {
+			return res, err
+		}
+		count, _ := GetCommentCount(id)
+
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Count: count}
+		res = append(res, c)
+	}
+
+	return res, nil
+}
