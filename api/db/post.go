@@ -178,7 +178,7 @@ func SearchPosts(key string) ([]*def.Post, error) {
 	return res, nil
 }
 func GetRank() ([]*def.Post, error) {
-	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag,posts.time FROM posts LEFT JOIN pv ON posts.id = pv.pid ORDER BY pv DESC limit 1,20")
+	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag,posts.time FROM posts LEFT JOIN pv ON posts.id = pv.pid ORDER BY pv DESC limit 0,10")
 
 	var res []*def.Post
 
