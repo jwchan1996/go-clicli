@@ -2,8 +2,8 @@ package db
 
 import (
 	"log"
-	"github.com/132yse/acgzone-server/api/util"
-	"github.com/132yse/acgzone-server/api/def"
+	"github.com/cliclitv/go-clicli/api/util"
+	"github.com/cliclitv/go-clicli/api/def"
 	"fmt"
 	"database/sql"
 )

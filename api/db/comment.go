@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/132yse/acgzone-server/api/def"
+	"github.com/cliclitv/go-clicli/api/def"
 	"log"
 	"time"
 )

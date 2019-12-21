@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/132yse/acgzone-server/api/def"
+	"github.com/cliclitv/go-clicli/api/def"
 	"io"
 	"net/http"
 )

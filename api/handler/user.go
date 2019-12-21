@@ -2,9 +2,9 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/132yse/acgzone-server/api/db"
-	"github.com/132yse/acgzone-server/api/def"
-	"github.com/132yse/acgzone-server/api/util"
+	"github.com/cliclitv/go-clicli/api/db"
+	"github.com/cliclitv/go-clicli/api/def"
+	"github.com/cliclitv/go-clicli/api/util"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"net/http"

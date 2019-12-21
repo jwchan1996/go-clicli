@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/132yse/acgzone-server/api/handler"
+	"github.com/cliclitv/go-clicli/api/handler"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
