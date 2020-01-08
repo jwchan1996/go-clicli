@@ -15,7 +15,7 @@ import (
 	"io"
 )
 
-const DOMAIN = "clicli.us"
+const DOMAIN = "clicli.me"
 
 func Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	req, _ := ioutil.ReadAll(r.Body)
