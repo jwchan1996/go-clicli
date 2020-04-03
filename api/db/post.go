@@ -1,12 +1,20 @@
 package db
 
 import (
-	"github.com/cliclitv/go-clicli/api/def"
-	"time"
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
+
+	"github.com/cliclitv/go-clicli/api/def"
+	"github.com/wangbin/jiebago"
 )
+
+var seg jiebago.Segmenter
+
+func init() {
+	seg.LoadDictionary("dict.txt")
+}
 
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
 	t := time.Now()
@@ -151,12 +159,35 @@ WHERE 1=1 %s ORDER BY time DESC limit ?,?`, query)
 }
 
 func SearchPosts(key string) ([]*def.Post, error) {
-	key = string("%" + key + "%")
-	stmtOut, err := dbConn.Prepare("SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag,posts.time,users.id,users.name,users.qq FROM posts LEFT JOIN users ON posts.uid = users.id WHERE title LIKE ? OR content LIKE ?")
+	var likeStr string
+
+	var words <-chan string
+	words = seg.CutForSearch(key, true)
+
+	index := 0
+	for word := range words {
+
+		index++
+		if index == 1 {
+			likeStr = "title LIKE '%" + word + "%'"
+		} else {
+			likeStr += " OR title LIKE '%" + word + "%'"
+		}
+
+	}
+
+	sql := `SELECT posts.id, posts.title, posts.content, posts.status, posts.sort, posts.tag, posts.time, users.id, users.name, users.qq 
+					FROM posts 
+					LEFT JOIN users ON posts.uid = users.id 
+					LEFT JOIN pv ON pv.pid = posts.id
+					WHERE ` + likeStr + `
+					ORDER BY pv.pv DESC`
+
+	stmtOut, err := dbConn.Prepare(sql)
 
 	var res []*def.Post
 
-	rows, err := stmtOut.Query(key, key)
+	rows, err := stmtOut.Query()
 	if err != nil {
 		return res, err
 	}

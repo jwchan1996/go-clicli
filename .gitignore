@@ -1,2 +1,6 @@
 .idea/
 api/db/conn.go
+api/go.mod
+api/go.sum
+go.mod
+go.sum
