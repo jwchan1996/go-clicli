@@ -1,13 +1,15 @@
 # go-clicli
-c站后端，golang 技术栈
 
-[clicli.us](https://www.clicli.us)
+[![Build Status](https://github.com/cliclitv/go_clicli/workflows/deploy/badge.svg?branch=master)]
+
+[www.clicli.me](https://www.clicli.us)
 
 ### 依赖
 * httprouter
 * fasthttp
 * go-sql-driver
 * jwt
+* jieba
 
 ### 特征
 * 用户、番剧的增删改查
