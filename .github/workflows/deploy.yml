@@ -6,12 +6,14 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
 			- name: Set up Go
 			  uses: actions/setup-go@master
 			  with:
 				  go-version: 1.14
-			  id: go
+        id: go
+        
+      - uses: actions/checkout@v2
+
 				
       - name: Build Image
         env:
