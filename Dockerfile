@@ -1,11 +1,10 @@
-FROM golang:1.13-alpine as builder
+FROM golang:alpine AS development
+WORKDIR $GOPATH/src
+COPY . .
+RUN go build -o app
 
-COPY ./ /api/
-WORKDIR /api/
-RUN go mod vendor && \
-    CGO_ENABLED=0 go build -v -o publisher
-
-EXPOSE 8084
-ENTRYPOINT []
-
-CMD [ "./go-clicli" ]
+FROM alpine:latest AS production
+WORKDIR /root/
+COPY --from=development /go/src/app .
+EXPOSE 8080
+ENTRYPOINT ["./app"]
