@@ -18,9 +18,6 @@ func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
 func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE")
-	w.Header().Add("Access-Control-Allow-Credentials", "true")
-	w.Header().Add("Access-Control-Max-Age", "3600")
-	w.Header().Add("Access-Control-Allow-Headers", "x-requested-with")
 	m.r.ServeHTTP(w, r)
 }
 
