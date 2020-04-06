@@ -11,6 +11,6 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: get
+      - name: download
         run: |
-          go install .
+          go mod download
