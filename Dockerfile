@@ -8,4 +8,4 @@ RUN go mod vendor && \
 EXPOSE 8084
 ENTRYPOINT []
 
-CMD [ "./api" ]
+CMD [ "./go-clicli" ]
