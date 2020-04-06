@@ -15,8 +15,7 @@ jobs:
 
       - name: Build
         run: |
-          cd api
           go get
           go build
           ls
-          ./api
+          ./go-clicli
