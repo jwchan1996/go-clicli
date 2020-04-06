@@ -23,20 +23,6 @@ type Post struct {
 	Count   *Count `json:"count"`
 }
 
-type Comment struct {
-	Id      int    `json:"id,omitempty"`
-	Content string `json:"content"`
-	Ctime   string `json:"ctime"`
-	Pid     int    `json:"pid"`
-	Vid     int    `json:"vid,omitempty"`
-	Tuid    int    `json:"tuid,omitempty"`
-	Time    int    `json:"time"`
-	Color   string `json:"color"`
-	Uid     int    `json:"uid,omitempty"`
-	Uname   string `json:"uname,omitempty"`
-	Uqq     string `json:"uqq,omitempty"`
-}
-
 type Video struct {
 	Id      int    `json:"id,omitempty"`
 	Oid     int    `json:"oid"`
@@ -56,10 +42,6 @@ type Posts struct {
 
 type Users struct {
 	Users []*User `json:"users"`
-}
-
-type Comments struct {
-	Comments []*Comment `json:"comments"`
 }
 
 type Videos struct {
