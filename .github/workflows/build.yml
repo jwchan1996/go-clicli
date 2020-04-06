@@ -5,21 +5,15 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v2-beta
+      - name: Set up Go
+        uses: actions/setup-go@master
         with:
-          go-version: 1.14
+          go-version: 1.12
         id: go
-
-      - name: setup env
-        run: |
-          echo "::set-env name=GOPATH::$(go env GOPATH)"
-          echo "::add-path::$(go env GOPATH)/bin"
-        shell: bash
 
       - uses: actions/checkout@v2
 
       - name: Build
         run: |
           go get
-          go install
+          go build
