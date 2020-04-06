@@ -1,5 +1,5 @@
-name: TechMojotvGo
-on: push
+name: build
+on: [push, pull_request]
 jobs:
   build:
     name: Build
