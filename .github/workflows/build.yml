@@ -11,7 +11,7 @@ jobs:
           go-version: 1.13
         id: go
 
-        uses: actions/checkout@v1
+      - uses: actions/checkout@v1
 
       - name: Build
         run: |
@@ -20,4 +20,3 @@ jobs:
           go build
           ls
           ./api
-            
