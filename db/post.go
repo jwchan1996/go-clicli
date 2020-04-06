@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
 	"github.com/cliclitv/go-clicli/def"
 	"github.com/wangbin/jiebago"
 )
@@ -17,8 +16,8 @@ func init() {
 }
 
 func AddPost(title string, content string, status string, sort string, tag string, uid int) (*def.Post, error) {
-	t := time.Now()
-	ctime := t.Format("2006-01-02 15:04")
+	cstZone := time.FixedZone("CST", 8*3600)  
+	ctime := time.Now().In(cstZone).Format("2006-01-02 15:04")
 	stmtIns, err := dbConn.Prepare("INSERT INTO posts (title,content,status,sort,tag,time,uid) VALUES (?,?,?,?,?,?,?)")
 	if err != nil {
 		return nil, err
