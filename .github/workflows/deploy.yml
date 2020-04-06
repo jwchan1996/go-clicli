@@ -14,10 +14,10 @@ on:
             id: go
         - name: Build Image
           env:
-            DockerUsername: ${{ secrets.DockerUsername }}
-            DockerPassword: ${{ secrets.DockerPassword }}
+            DockerUsername: ${{ secrets.DOCKER_USERNAME }}
+            DockerPassword: ${{ secrets.DOCKER_PASSWORD }}
           run: |
-            docker login -u $DockerUsername -p $DockerPassword
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
             docker build -t yisar/clicli_server .
             docker push yisar/clicli_server
     # deploy:
