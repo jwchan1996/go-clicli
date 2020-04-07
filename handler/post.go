@@ -79,7 +79,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq, Count: resp.Count}
+		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
 		sendPostResponse(w, res, 200)
 	}
 }

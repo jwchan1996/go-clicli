@@ -87,8 +87,7 @@ INNER JOIN users ON posts.uid = users.id WHERE posts.id = ?`)
 	}
 	defer stmtOut.Close()
 
-	count, err := GetCommentCount(id)
-	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
+	res := &def.Post{Id: pid, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
 
 	return res, nil
 }
@@ -148,8 +147,7 @@ WHERE 1=1 %s ORDER BY time DESC limit ?,?`, query)
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
-		count, _ := GetCommentCount(id)
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
 		res = append(res, c)
 	}
 
@@ -199,9 +197,7 @@ func SearchPosts(key string) ([]*def.Post, error) {
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime, &uid, &uname, &uqq); err != nil {
 			return res, err
 		}
-		count, _ := GetCommentCount(id)
-
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq, Count: count}
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid, Uname: uname, Uqq: uqq}
 		res = append(res, c)
 	}
 
@@ -225,9 +221,8 @@ func GetRank() ([]*def.Post, error) {
 		if err := rows.Scan(&id, &title, &content, &status, &sort, &tag, &ctime); err != nil {
 			return res, err
 		}
-		count, _ := GetCommentCount(id)
 
-		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Count: count}
+		c := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime}
 		res = append(res, c)
 	}
 

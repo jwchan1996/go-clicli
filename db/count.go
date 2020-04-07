@@ -5,19 +5,19 @@ import (
 	"database/sql"
 )
 
-func GetCommentCount(pid int) (*def.Count, error) {
-	stmtCount, err := dbConn.Prepare("SELECT COUNT(*) FROM comments WHERE pid = ?")
+func GetPv(pid int) (*def.Pv, error) {
+	stmtCount, err := dbConn.Prepare("SELECT pv FROM pv WHERE pid = ?")
 	if err != nil {
 		return nil, err
 	}
 
-	var pv, cv int
-	err = stmtCount.QueryRow(pid).Scan(&cv)
+	var pv int
+	err = stmtCount.QueryRow(pid).Scan(&pv)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
-	res := &def.Count{Pid: pid, Pv: pv, Cv: cv}
+	res := &def.Pv{Pid: pid, Pv: pv}
 
 	defer stmtCount.Close()
 

@@ -20,7 +20,6 @@ type Post struct {
 	Uid     int    `json:"uid,omitempty"`
 	Uname   string `json:"uname,omitempty"`
 	Uqq     string `json:"uqq,omitempty"`
-	Count   *Count `json:"count"`
 }
 
 type Video struct {
