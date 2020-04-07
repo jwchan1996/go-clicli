@@ -80,6 +80,16 @@ func sendCookieResponse(w http.ResponseWriter, cRes def.Cookie, sc int) {
 	io.WriteString(w, string(resStr))
 }
 
+func sendPvResponse(w http.ResponseWriter, cRes def.Pv, sc int) {
+	w.WriteHeader(sc)
+	resStr, _ := json.Marshal(struct {
+		Code   int      `json:"code"`
+		Result def.Pv 	`json:"result"`
+	}{sc, cRes})
+
+	io.WriteString(w, string(resStr))
+}
+
 func sendMsg(w http.ResponseWriter, code int, msg string) {
 	w.WriteHeader(code)
 	resStr, _ := json.Marshal(struct {
