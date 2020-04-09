@@ -18,7 +18,6 @@ func ReplaceCookie(uid int, hcy string, quqi string) (*def.Cookie, error) {
 	defer stmtIns.Close()
 
 	res := &def.Cookie{Uid: uid, Hcy: hcy, Quqi: quqi}
-	defer stmtIns.Close()
 	return res, err
 }
 
@@ -37,9 +36,10 @@ func GetCookie(uid int) (*def.Cookie, error) {
 		log.Printf("%v", err)
 		return nil, err
 	}
-	res := &def.Cookie{Uid: uid, Hcy: hcy, Quqi: quqi}
 
 	defer stmtOut.Close()
+	
+	res := &def.Cookie{Uid: uid, Hcy: hcy, Quqi: quqi}
 
 	return res, nil
 }

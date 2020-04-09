@@ -25,11 +25,8 @@ func AddPost(title string, content string, status string, sort string, tag strin
 	}
 	_, err = stmtIns.Exec(title, content, status, sort, tag, ctime, uid)
 	if err != nil {
-
 		return nil, err
 	}
-	defer stmtIns.Close()
-
 	res := &def.Post{Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: ctime, Uid: uid}
 	defer stmtIns.Close()
 
@@ -46,8 +43,6 @@ func UpdatePost(id int, title string, content string, status string, sort string
 	if err != nil {
 		return nil, err
 	}
-	defer stmtIns.Close()
-
 	res := &def.Post{Id: id, Title: title, Content: content, Status: status, Sort: sort, Tag: tag, Time: time}
 	defer stmtIns.Close()
 	return res, err
@@ -66,7 +61,6 @@ func DeletePost(id int) error {
 	stmtDel.Close()
 
 	return nil
-
 }
 
 func GetPost(id int) (*def.Post, error) {

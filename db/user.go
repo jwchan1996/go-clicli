@@ -51,7 +51,6 @@ func UpdateUser(id int, name string, pwd string, level int, qq string, sign stri
 		defer stmtIns.Close()
 
 		res := &def.User{Id: id, Name: name, Pwd: pwd, QQ: qq, Level: level, Desc: sign}
-		defer stmtIns.Close()
 		return res, err
 	}
 
@@ -162,7 +161,7 @@ func DeleteUser(id int) error {
 	if err != nil {
 		return err
 	}
-	stmtDel.Close()
+	defer stmtDel.Close()
 
 	return nil
 }

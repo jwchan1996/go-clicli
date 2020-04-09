@@ -40,6 +40,7 @@ WHERE videos.pid=? OR videos.uid =? ORDER BY oid,uid limit ?,?`)
 	if err != nil {
 		return res, err
 	}
+	defer stmtOut.Close()
 
 	for rows.Next() {
 		var id, oid, pid, uid int
@@ -51,8 +52,6 @@ WHERE videos.pid=? OR videos.uid =? ORDER BY oid,uid limit ?,?`)
 		c := &def.Video{Id: id, Oid: oid, Title: title, Content: content, Time: ctime, Pid: pid, Uid: uid, Uname: uname, Uqq: uqq}
 		res = append(res, c)
 	}
-	defer stmtOut.Close()
-
 	return res, nil
 
 }
@@ -95,7 +94,6 @@ func UpdateVideo(id int, oid int, title string, content string, pid int, uid int
 	defer stmtIns.Close()
 
 	res := &def.Video{Id: id, Oid: oid, Title: title, Content: content, Pid: pid, Uid: uid, Time: ctime}
-	defer stmtIns.Close()
 	return res, err
 }
 
@@ -109,7 +107,7 @@ func DeleteVideo(id int, pid int) error {
 	if err != nil {
 		return err
 	}
-	stmtDel.Close()
+	defer stmtDel.Close()
 
 	return nil
 
