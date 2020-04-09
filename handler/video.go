@@ -26,8 +26,7 @@ func AddVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Video{Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Uid: resp.Uid}
-		sendVideoResponse(w, res, 200)
+		sendVideoResponse(w, resp, 200)
 	}
 
 }
@@ -50,8 +49,7 @@ func UpdateVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Video{Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Uid: resp.Uid}
-		sendVideoResponse(w, res, 200)
+		sendVideoResponse(w, resp, 200)
 	}
 
 }
@@ -78,8 +76,7 @@ func GetVideo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Video{Id: resp.Id, Oid: resp.Oid, Title: resp.Title, Content: resp.Content, Time: resp.Time, Pid: resp.Pid, Ptitle: resp.Ptitle, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
-		sendVideoResponse(w, res, 200)
+		sendVideoResponse(w, resp, 200)
 	}
 }
 

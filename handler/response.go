@@ -50,11 +50,11 @@ func sendUsersResponse(w http.ResponseWriter, pRes *def.Users, sc int) {
 	io.WriteString(w, string(resStr))
 }
 
-func sendVideoResponse(w http.ResponseWriter, Res def.Video, sc int) {
+func sendVideoResponse(w http.ResponseWriter, Res *def.Video, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
 		Code   int       `json:"code"`
-		Result def.Video `json:"result"`
+		Result *def.Video `json:"result"`
 	}{sc, Res})
 
 	io.WriteString(w, string(resStr))
