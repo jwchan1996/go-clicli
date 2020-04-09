@@ -20,11 +20,11 @@ func sendUserResponse(w http.ResponseWriter, uRes *def.User, sc int, msg string)
 
 }
 
-func sendPostResponse(w http.ResponseWriter, pRes def.Post, sc int) {
+func sendPostResponse(w http.ResponseWriter, pRes *def.Post, sc int) {
 	w.WriteHeader(sc)
 	resStr, _ := json.Marshal(struct {
 		Code   int      `json:"code"`
-		Result def.Post `json:"result"`
+		Result *def.Post `json:"result"`
 	}{sc, pRes})
 
 	io.WriteString(w, string(resStr))

@@ -28,8 +28,7 @@ func AddPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time, Uid: resp.Uid}
-		sendPostResponse(w, res, 200)
+		sendPostResponse(w, resp, 200)
 	}
 
 }
@@ -51,8 +50,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time}
-		sendPostResponse(w, res, 200)
+		sendPostResponse(w, resp, 200)
 	}
 
 }
@@ -79,8 +77,7 @@ func GetPost(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		sendMsg(w,401,"数据库错误")
 		return
 	} else {
-		res := def.Post{Id: resp.Id, Title: resp.Title, Content: resp.Content, Status: resp.Status, Sort: resp.Sort, Tag: resp.Tag, Time: resp.Time, Uid: resp.Uid, Uname: resp.Uname, Uqq: resp.Uqq}
-		sendPostResponse(w, res, 200)
+		sendPostResponse(w, resp, 200)
 	}
 }
 
@@ -118,7 +115,6 @@ func SearchPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetRank(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-
 	resp, err := db.GetRank()
 	if err != nil {
 		sendMsg(w,401,"数据库错误")
